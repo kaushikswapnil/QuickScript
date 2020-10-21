@@ -1,0 +1,7 @@
+class HWorld
+{
+	int heu
+	bool whats;
+}
+
+int 3 

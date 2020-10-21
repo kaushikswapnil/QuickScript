@@ -1,0 +1,4 @@
+﻿  TypeCreation.cpp
+d:\swapnil\projects\source\repos\quickscript\quickscript\typecreation.cpp(81): warning C4267: 'initializing': conversion from 'size_t' to 'uint8_t', possible loss of data
+d:\swapnil\projects\source\repos\quickscript\quickscript\typecreation.cpp(89): error C2440: '=': cannot convert from 'const ObjectTypeDescription' to 'const ObjectTypeDescription *'
+  d:\swapnil\projects\source\repos\quickscript\quickscript\typecreation.cpp(89): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
