@@ -1,4 +1,24 @@
-﻿  TypeCreation.cpp
-d:\swapnil\projects\source\repos\quickscript\quickscript\typecreation.cpp(81): warning C4267: 'initializing': conversion from 'size_t' to 'uint8_t', possible loss of data
-d:\swapnil\projects\source\repos\quickscript\quickscript\typecreation.cpp(89): error C2440: '=': cannot convert from 'const ObjectTypeDescription' to 'const ObjectTypeDescription *'
-  d:\swapnil\projects\source\repos\quickscript\quickscript\typecreation.cpp(89): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+﻿  Attribute.cpp
+  HashString.cpp
+d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.cpp(13): fatal error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "pch.h"' to your source?
+  TypeSerialization.cpp
+d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(3): error C2011: 'HashString': 'class' type redefinition
+  d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(2): note: see declaration of 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(27): error C2079: 'TypeInstanceDescription::m_Name' uses undefined class 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(28): error C2079: 'TypeInstanceDescription::m_Filename' uses undefined class 'HashString'
+  QuickScript.cpp
+d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(3): error C2011: 'HashString': 'class' type redefinition
+  d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(2): note: see declaration of 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(27): error C2079: 'TypeInstanceDescription::m_Name' uses undefined class 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(28): error C2079: 'TypeInstanceDescription::m_Filename' uses undefined class 'HashString'
+  Type.cpp
+d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(3): error C2011: 'HashString': 'class' type redefinition
+  d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(2): note: see declaration of 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(27): error C2079: 'TypeInstanceDescription::m_Name' uses undefined class 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(28): error C2079: 'TypeInstanceDescription::m_Filename' uses undefined class 'HashString'
+  TypeCreation.cpp
+d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(3): error C2011: 'HashString': 'class' type redefinition
+  d:\swapnil\projects\source\repos\quickscript\quickscript\hashstring.h(2): note: see declaration of 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(27): error C2079: 'TypeInstanceDescription::m_Name' uses undefined class 'HashString'
+d:\swapnil\projects\source\repos\quickscript\quickscript\type.h(28): error C2079: 'TypeInstanceDescription::m_Filename' uses undefined class 'HashString'
+  Generating Code...

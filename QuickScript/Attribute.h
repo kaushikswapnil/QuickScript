@@ -1,8 +1,10 @@
 #pragma once
-class Attribute
+#include <string>
+#include "HashString.h"
+
+struct Attribute
 {
-public:
-	Attribute();
-	~Attribute();
+	Attribute(const HashString& name) : m_Name(name) {}
+	HashString m_Name;
 };
 

@@ -15,10 +15,7 @@ int main()
 	const std::string working_dir{__FILE__};
 	_chdir((((std::filesystem::path(working_dir)).parent_path()).u8string()).c_str());
 
-	std::string file_path{"ObjectTypeDescriptions.xml"};
-
-	ObjectFactory factory;
-	factory.Initialize(file_path);
+	std::string file_path{"PrimitiveObjectTypeDescriptions.xml"};
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

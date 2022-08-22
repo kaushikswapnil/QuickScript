@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuickScript", "QuickScript\QuickScript.vcxproj", "{CF4D5FD2-21E2-46C9-BA01-FF2637B31C8D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818} = {014E3313-E7FE-4DCF-A8EE-0298A3FA3818}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Essentials", "..\Essentials\Essentials\Essentials.vcxproj", "{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,14 +21,6 @@ Global
 		{CF4D5FD2-21E2-46C9-BA01-FF2637B31C8D}.Release|x64.Build.0 = Release|x64
 		{CF4D5FD2-21E2-46C9-BA01-FF2637B31C8D}.Release|x86.ActiveCfg = Release|Win32
 		{CF4D5FD2-21E2-46C9-BA01-FF2637B31C8D}.Release|x86.Build.0 = Release|Win32
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Debug|x64.ActiveCfg = Debug|x64
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Debug|x64.Build.0 = Debug|x64
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Debug|x86.ActiveCfg = Debug|Win32
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Debug|x86.Build.0 = Debug|Win32
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Release|x64.ActiveCfg = Release|x64
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Release|x64.Build.0 = Release|x64
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Release|x86.ActiveCfg = Release|Win32
-		{014E3313-E7FE-4DCF-A8EE-0298A3FA3818}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -44,6 +44,7 @@
     <ClInclude Include="rapidxml\rapidxml_utils.hpp">
       <Filter>Source Files\Utils\Rapidxml</Filter>
     </ClInclude>
+    <ClInclude Include="HashString.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -63,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="TypeSerialization.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="HashString.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
