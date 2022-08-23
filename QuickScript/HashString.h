@@ -16,11 +16,11 @@ public:
 	const HashValueType AsValue() const;
 	std::string AsString() const;
 
-	void Reset();
-private:
-	void Set(const std::string& val);
-	void Set(const HashValueType val);
+	void Reset() {}
+	void Set(const std::string& val) {}
+	void Set(const HashValueType val) {}
 
+private:
 	std::string m_Name;
 	HashValueType m_Hash;
 };

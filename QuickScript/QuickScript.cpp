@@ -9,6 +9,74 @@
 #include "Type.h"
 #include "TypeCreation.h"
 #include "TypeSerialization.h"
+#include <fstream>
+
+enum class ReadTypeState {
+	Invalid,
+	Attribute,
+	Class,
+	Member,
+	Value,
+	Count
+};
+
+void FetchTypesFromFile(const std::filesystem::directory_entry& entry)
+{
+	std::ifstream file;
+	file.open(entry, std::ios::in);
+
+	char c;
+	std::vector<std::string> prev_words;
+	std::vector<ReadTypeState> read_state_stack;
+	read_state_stack.push_back(ReadTypeState::Invalid);
+	std::string cur_word;
+
+	TypeInstanceDescription tentative_desc;
+	while (file.get(c))
+	{
+		ReadTypeState cur_state = read_state_stack.back();
+		switch (c)
+		{
+		case ' ':
+			prev_words.push_back(cur_word);
+			cur_word.clear();
+			break;
+		case '{': 
+		{
+			std::string class_name = prev_words.back();
+			prev_words.pop_back();
+			std::string struct_or_class_name = prev_words.back();
+			prev_words.pop_back();
+			read_state_stack.push_back(ReadTypeState::Class);
+			tentative_desc.m_Name.Set(class_name);
+		}
+			break;
+		case '}':
+		{
+			ReadTypeState state = read_state_stack.back();
+			read_state_stack.pop_back();
+		}
+			break;
+		case '[':
+			read_state_stack.push_back(ReadTypeState::Attribute);
+			break;
+		case ']':
+		{
+			ReadTypeState state = read_state_stack.back();
+			//std::cout << "Popping state " << state;
+			read_state_stack.pop_back();
+		}
+			break;
+		case ',':
+			prev_words.push_back(cur_word);
+			cur_word.clear();
+			break;
+		default:
+			cur_word.push_back(c);
+			break;
+		}
+	}
+}
 
 int main()
 {
@@ -19,7 +87,7 @@ int main()
 
 	for (const auto& entry : std::filesystem::directory_iterator(working_folder))
 	{
-		std::cout << entry.path() << std::endl;
+		FetchTypesFromFile(entry);
 	}
 
 	return 0;
