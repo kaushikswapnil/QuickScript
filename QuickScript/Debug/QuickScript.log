@@ -1,8 +1,2 @@
-﻿  Attribute.cpp
-  HashString.cpp
-  QuickScript.cpp
-  Type.cpp
-  TypeCreation.cpp
-  TypeSerialization.cpp
-  Generating Code...
+﻿  QuickScript.cpp
   QuickScript.vcxproj -> D:\PersonalProjects\QuickScript\Debug\QuickScript.exe

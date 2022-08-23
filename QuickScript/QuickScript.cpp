@@ -27,6 +27,7 @@ void FetchTypesFromFile(const std::filesystem::directory_entry& entry)
 
 	char c;
 	std::vector<std::string> prev_words;
+	std::vector<std::string> attributes;
 	std::vector<ReadTypeState> read_state_stack;
 	read_state_stack.push_back(ReadTypeState::Invalid);
 	std::string cur_word;
@@ -35,10 +36,18 @@ void FetchTypesFromFile(const std::filesystem::directory_entry& entry)
 	while (file.get(c))
 	{
 		ReadTypeState cur_state = read_state_stack.back();
+		ReadTypeState prev_state = read_state_stack.size() > 1 ? read_state_stack[read_state_stack.size() - 2] : ReadTypeState::Invalid;
 		switch (c)
 		{
 		case ' ':
-			prev_words.push_back(cur_word);
+			if (cur_state == ReadTypeState::Attribute)
+			{
+				attributes.push_back(cur_word);
+			}
+			else
+			{
+				prev_words.push_back(cur_word);
+			}
 			cur_word.clear();
 			break;
 		case '{': 
@@ -68,7 +77,10 @@ void FetchTypesFromFile(const std::filesystem::directory_entry& entry)
 		}
 			break;
 		case ',':
-			prev_words.push_back(cur_word);
+			if (cur_state == ReadTypeState::Attribute)
+			{
+				attributes.push_back(cur_word);
+			}
 			cur_word.clear();
 			break;
 		default:
