@@ -12,10 +12,17 @@
 
 int main()
 {
-	const std::string working_dir{__FILE__};
-	_chdir((((std::filesystem::path(working_dir)).parent_path()).u8string()).c_str());
+	const std::string main_file_dir{__FILE__};
+	std::filesystem::path working_folder = (std::filesystem::path(main_file_dir)).parent_path();
+	working_folder.append("ReadDirectory\\");
+	_chdir((working_folder.u8string().c_str()));
 
-	std::string file_path{"PrimitiveObjectTypeDescriptions.xml"};
+	for (const auto& entry : std::filesystem::directory_iterator(working_folder))
+	{
+		std::cout << entry.path() << std::endl;
+	}
+
+	return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
