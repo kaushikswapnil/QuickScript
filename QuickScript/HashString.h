@@ -8,19 +8,18 @@ public:
 	typedef unsigned int HashValueType;
 	static constexpr HashValueType InvalidValue = 0xdeadbeef;
 
-	HashString();
-	HashString(const std::string& value) {}
-	HashString(const HashValueType& value) {}
-	~HashString();
+	HashString() = default;
+	HashString(const std::string& value) { Set(value);}
 
 	const HashValueType AsValue() const;
-	std::string AsString() const;
+	std::string AsString() const { return m_Str;}
 
 	void Reset() {}
-	void Set(const std::string& val) {}
-	void Set(const HashValueType val) {}
+	void Set(const std::string& val) { m_Str = val;}
+
+	bool IsValid() const { return m_Str.size() > 0; }
 
 private:
-	std::string m_Name;
-	HashValueType m_Hash;
+	std::string m_Str{};
+	HashValueType m_Val;
 };

@@ -5,20 +5,26 @@
 #include <optional>
 #include "HashString.h"
 
-struct TypeInstanceDescription;
+struct Member;
 
 typedef std::vector<Attribute> AttributeContainer;
-typedef std::vector<TypeInstanceDescription> MemberContainer;
+typedef std::vector<Member> MemberContainer;
 
 struct Value
 {
 	std::string ValueString{};
+
+	bool IsValid() const { return ValueString.size() > 0;}
 };
 
-/*
-An object is an instance of well an object, it could be used to describe an integer
-in another complex class with a value and default attributes
-*/
+struct Member
+{
+	HashString m_Name{};
+	HashString	m_TypeName{};
+	AttributeContainer m_Attributes{};
+	Value m_DefaultValue{};
+};
+
 struct TypeInstanceDescription
 {
 	std::optional<Value> m_DefaultValue{};
@@ -27,4 +33,6 @@ struct TypeInstanceDescription
 	HashString m_Name;
 	HashString m_Filename;
 	bool IsValid() const { return true; }
+
+	void Dump() const;
 };
