@@ -26,4 +26,5 @@ struct TypeInstanceDescription
 	MemberContainer m_Members{};
 	HashString m_Name;
 	HashString m_Filename;
+	bool IsValid() const { return true; }
 };

@@ -9,8 +9,8 @@ public:
 	static constexpr HashValueType InvalidValue = 0xdeadbeef;
 
 	HashString();
-	HashString(const std::string& value);
-	HashString(const HashValueType& value);
+	HashString(const std::string& value) {}
+	HashString(const HashValueType& value) {}
 	~HashString();
 
 	const HashValueType AsValue() const;

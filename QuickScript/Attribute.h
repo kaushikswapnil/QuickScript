@@ -6,5 +6,6 @@ struct Attribute
 {
 	Attribute(const HashString& name) : m_Name(name) {}
 	HashString m_Name;
+	bool IsValid() const { return true;}
 };
 
