@@ -7,7 +7,7 @@ class HashString
 public:
 	typedef unsigned int HashValueType;
 
-	HashString() = default;
+	HashString() { Reset(); }
 	HashString(const std::string& value) { Set(value);}
 
 	operator std::string() const { return m_Str; }
@@ -15,16 +15,18 @@ public:
 
 	bool operator==(const HashString& rhs) const { return m_Val == rhs.m_Val;}
 
-	const HashValueType AsValue() const;
+	const HashValueType AsValue() const { return m_Val;}
 	std::string AsString() const { return m_Str;}
 
-	void Reset() {}
+	void Reset();
 	void Set(const std::string& val);
 
-	bool IsValid() const { return m_Str.size() > 0; }
+	bool IsValid() const { return *this != InvalidHashString(); }
+
+	static const HashString& InvalidHashString();
 
 private:
-	static void Set(HashString& str, const std::string& val);
+	static HashValueType GetHashFor(const std::string& val);
 
 	std::string m_Str{};
 	HashValueType m_Val;

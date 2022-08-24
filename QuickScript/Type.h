@@ -10,13 +10,6 @@ struct TypeInstanceMember;
 typedef std::vector<Attribute> AttributeContainer;
 typedef std::vector<TypeInstanceMember> TypeInstanceMemberContainer;
 
-struct Value
-{
-	std::string ValueString{};
-
-	bool IsValid() const { return ValueString.size() > 0;}
-};
-
 struct TypeInstanceMember
 {
 	HashString m_Name{};
@@ -38,14 +31,24 @@ struct TypeInstanceDescription
 };
 
 typedef size_t TypeDefinitionHandle;
+typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
 struct TypeDefinition
 {
 	HashString m_Name;
 	HashString m_QSFileName;
 	AttributeContainer m_Attributes;
-	std::optional<Value> m_DefaultValue{};
-	std::vector<TypeDefinitionHandle> m_Members;
+	Value m_DefaultValue{};
+	TypeDefinitionHandleContainer m_Members;
 	std::vector<AttributeContainer> m_MemberAttributes;
+
+	TypeDefinition(const std::string& name,
+		const std::string qs_file,
+		const AttributeContainer& attr,
+		const Value& def_val,
+		const TypeDefinitionHandleContainer& members,
+		const std::vector<AttributeContainer>& member_attr) :
+			m_Name(name), m_QSFileName(qs_file), m_Attributes(attr),
+			m_DefaultValue(def_val), m_Members(members), m_MemberAttributes(member_attr) {}
 };
 
 struct TypeMap

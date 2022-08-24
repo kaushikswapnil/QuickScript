@@ -1,14 +1,26 @@
 #include "pch.h"
 #include "HashString.h"
 
-void HashString::Set(const std::string& val)
+void HashString::Reset()
 {
-	Set(*this, val);
+	m_Str.clear();
+	m_Val = GetHashFor(m_Str);
 }
 
-void HashString::Set(HashString& hash_str, const std::string& val)
+void HashString::Set(const std::string& val)
+{
+	m_Str = val;
+	m_Val = GetHashFor(val);
+}
+
+const HashString& HashString::InvalidHashString()
+{
+	static const HashString INVALID{};
+	return INVALID;
+}
+
+HashString::HashValueType HashString::GetHashFor(const std::string& val)
 {
 	static std::hash<std::string> hasher;
-	hash_str.m_Str = val;
-	hash_str.m_Val = hasher(val);
+	return hasher(val);
 }
