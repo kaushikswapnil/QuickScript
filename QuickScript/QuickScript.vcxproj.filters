@@ -15,9 +15,6 @@
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{1737b723-3124-4a1e-8a2a-aa361ada6223}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utils\Rapidxml">
-      <UniqueIdentifier>{02b4b921-6651-4f3c-b2d5-46c924ce8447}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Type.h">
@@ -26,26 +23,9 @@
     <ClInclude Include="Attribute.h">
       <Filter>Source Files\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="TypeCreation.h">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeSerialization.h">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml\rapidxml.hpp">
-      <Filter>Source Files\Utils\Rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml\rapidxml_iterators.hpp">
-      <Filter>Source Files\Utils\Rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml\rapidxml_print.hpp">
-      <Filter>Source Files\Utils\Rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml\rapidxml_utils.hpp">
-      <Filter>Source Files\Utils\Rapidxml</Filter>
-    </ClInclude>
     <ClInclude Include="HashString.h" />
     <ClInclude Include="QSParser.h" />
+    <ClInclude Include="QuickScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -57,12 +37,6 @@
     <ClCompile Include="Attribute.cpp">
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
-    <ClCompile Include="TypeCreation.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="TypeSerialization.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="HashString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,6 +44,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="QuickScriptMainSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

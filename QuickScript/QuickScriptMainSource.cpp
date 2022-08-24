@@ -2,27 +2,17 @@
 //
 
 #include "pch.h"
-#include <iostream>
-#include <string>
 #include <filesystem>
-#include <direct.h>
-#include "Type.h"
-#include "TypeCreation.h"
-#include "TypeSerialization.h"
-#include <fstream>
-#include "QSParser.h"
+#include "QuickScript.h"
 
 int main()
 {
 	const std::string main_file_dir{__FILE__};
 	std::filesystem::path working_folder = (std::filesystem::path(main_file_dir)).parent_path();
 	working_folder.append("ReadDirectory\\");
-	_chdir((working_folder.u8string().c_str()));
-
-	for (const auto& entry : std::filesystem::directory_iterator(working_folder))
-	{
-		QSParser::ParseFile(entry);
-	}
+	QuickScriptInitParams params;
+	params.ReadDirectoryPath = working_folder;
+	QuickScript qs{ params };
 
 	return 0;
 }

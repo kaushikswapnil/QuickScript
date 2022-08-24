@@ -5,10 +5,10 @@
 #include <optional>
 #include "HashString.h"
 
-struct Member;
+struct TypeInstanceMember;
 
 typedef std::vector<Attribute> AttributeContainer;
-typedef std::vector<Member> MemberContainer;
+typedef std::vector<TypeInstanceMember> TypeInstanceMemberContainer;
 
 struct Value
 {
@@ -17,7 +17,7 @@ struct Value
 	bool IsValid() const { return ValueString.size() > 0;}
 };
 
-struct Member
+struct TypeInstanceMember
 {
 	HashString m_Name{};
 	HashString	m_TypeName{};
@@ -29,7 +29,7 @@ struct TypeInstanceDescription
 {
 	std::optional<Value> m_DefaultValue{};
 	AttributeContainer m_Attributes{};
-	MemberContainer m_Members{};
+	TypeInstanceMemberContainer m_Members{};
 	HashString m_Name;
 	HashString m_Filename;
 	bool IsValid() const { return true; }

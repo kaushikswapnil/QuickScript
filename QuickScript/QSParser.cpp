@@ -58,7 +58,7 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 	state_stack.push_back(ReadTypeState::Class);
 
 	AttributeContainer attributes;
-	MemberContainer members;
+	TypeInstanceMemberContainer members;
 
 	TypeInstanceDescription tentative_type;
 
@@ -111,7 +111,7 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 					unhandled_eq_nodes.pop_back(); //for the val
 					unhandled_eq_nodes.pop_back(); //=
 				}
-				Member member;
+				TypeInstanceMember member;
 				member.m_DefaultValue = default_val;
 				member.m_Name.Set(unhandled_eq_nodes.back());
 				unhandled_eq_nodes.pop_back();

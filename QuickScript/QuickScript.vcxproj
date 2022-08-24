@@ -156,28 +156,22 @@
     <ClInclude Include="Attribute.h" />
     <ClInclude Include="HashString.h" />
     <ClInclude Include="QSParser.h" />
-    <ClInclude Include="rapidxml\rapidxml.hpp" />
-    <ClInclude Include="rapidxml\rapidxml_iterators.hpp" />
-    <ClInclude Include="rapidxml\rapidxml_print.hpp" />
-    <ClInclude Include="rapidxml\rapidxml_utils.hpp" />
-    <ClInclude Include="TypeSerialization.h" />
+    <ClInclude Include="QuickScript.h" />
     <ClInclude Include="Type.h" />
-    <ClInclude Include="TypeCreation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="HashString.cpp" />
     <ClCompile Include="QSParser.cpp" />
-    <ClCompile Include="TypeSerialization.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="QuickScript.cpp" />
     <ClCompile Include="QuickScriptMainSource.cpp" />
     <ClCompile Include="Type.cpp" />
-    <ClCompile Include="TypeCreation.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
