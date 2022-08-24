@@ -1,2 +1,9 @@
-﻿  Type.cpp
+﻿  Attribute.cpp
+  HashString.cpp
+  QSParser.cpp
+  TypeSerialization.cpp
+  QuickScript.cpp
+  Type.cpp
+  TypeCreation.cpp
+  Generating Code...
   QuickScript.vcxproj -> D:\Swapnil\Projects\source\repos\QuickScript\Debug\QuickScript.exe
