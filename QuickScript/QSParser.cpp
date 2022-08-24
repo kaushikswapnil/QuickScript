@@ -28,12 +28,16 @@ void QSParser::ParseFile(const std::filesystem::directory_entry& entry)
 			}
 			break;
 		case ';':
+		case '{':
+		case '}':
+		case '[':
+		case ']':
 			if (cur_word.size() > 0)
 			{
 				words.push_back(cur_word);
 				cur_word.clear();
-				words.push_back(";");
 			}
+			words.push_back(std::string{c});
 			break;
 		default:
 			cur_word.push_back(c);
