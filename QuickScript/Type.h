@@ -36,3 +36,19 @@ struct TypeInstanceDescription
 
 	void Dump() const;
 };
+
+typedef size_t TypeDefinitionHandle;
+struct TypeDefinition
+{
+	HashString m_Name;
+	HashString m_QSFileName;
+	AttributeContainer m_Attributes;
+	std::optional<Value> m_DefaultValue{};
+	std::vector<TypeDefinitionHandle> m_Members;
+	std::vector<AttributeContainer> m_MemberAttributes;
+};
+
+struct TypeMap
+{
+	std::vector<TypeDefinition> m_Definitions;
+};
