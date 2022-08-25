@@ -5,7 +5,7 @@
 class HashString
 {
 public:
-	typedef unsigned int HashValueType;
+	typedef size_t HashValueType;
 
 	HashString() { Reset(); }
 	HashString(const std::string& value) { Set(value);}
@@ -31,3 +31,16 @@ private:
 	std::string m_Str{};
 	HashValueType m_Val;
 };
+
+namespace std {
+
+	template <>
+	struct hash<HashString>
+	{
+		std::size_t operator()(const HashString& k) const
+		{
+			return k.AsValue();
+		}
+	};
+
+}

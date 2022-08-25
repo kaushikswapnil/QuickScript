@@ -4,6 +4,7 @@
 #include "Attribute.h"
 #include <optional>
 #include "HashString.h"
+#include <unordered_map>
 
 struct TypeInstanceMember;
 
@@ -54,4 +55,5 @@ struct TypeDefinition
 struct TypeMap
 {
 	std::vector<TypeDefinition> m_Definitions;
+	std::unordered_map<HashString, TypeDefinitionHandle> m_NameHashToHandleMap;
 };
