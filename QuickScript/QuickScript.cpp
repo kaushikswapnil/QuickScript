@@ -5,7 +5,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-QuickScript::QuickScript(const QuickScriptInitParams& params)
+QuickScript::QuickScript(const QuickScriptInitParams& params) : m_InitParams(params)
 {
 	InitializeTypeMap(params);
 
@@ -15,10 +15,14 @@ QuickScript::QuickScript(const QuickScriptInitParams& params)
 	}
 }
 
+QuickScript::~QuickScript()
+{
+	WriteTypeMap();
+}
+
 void QuickScript::InitializeTypeMap(const QuickScriptInitParams& params)
 {
-	std::filesystem::path type_map_file_path = params.TypeMapDirectory;
-	type_map_file_path.append("typemapdef.qstmdef");
+	const std::filesystem::path type_map_file_path = GetTypeMapDefinitionsFilePath();
 	std::ifstream input;
 	input.open(type_map_file_path.generic_string().c_str(), std::ios::in);
 
@@ -44,4 +48,21 @@ void QuickScript::GenerateTypeMapFromScratch()
 	InsertType(HashString{ "bool" }, HashString::InvalidHashString(), {}, {}, {}, {});
 	InsertType(HashString{ "int" }, HashString::InvalidHashString(), {}, {}, {}, {});
 	InsertType(HashString{ "float" }, HashString::InvalidHashString(), {}, {}, {}, {});
+}
+
+void QuickScript::WriteTypeMap()
+{
+	const std::filesystem::path type_map_file_path = GetTypeMapDefinitionsFilePath();
+	std::ofstream output;
+	output.open(type_map_file_path.generic_string().c_str(), std::ios::out);
+
+	boost::archive::text_oarchive oa(output);
+	oa << m_TypeMap;
+}
+
+std::filesystem::path QuickScript::GetTypeMapDefinitionsFilePath() const
+{
+	std::filesystem::path type_map_file_path = m_InitParams.TypeMapDirectory;
+	type_map_file_path.append("typemapdef.qstmdef");
+	return type_map_file_path;
 }

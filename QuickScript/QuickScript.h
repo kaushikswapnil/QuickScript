@@ -13,11 +13,14 @@ class QuickScript
 {
 public:
 	QuickScript(const QuickScriptInitParams& params);
-	~QuickScript() = default;
+	~QuickScript();
 
 private:
 	void InitializeTypeMap(const QuickScriptInitParams& params);
 	void GenerateTypeMapFromScratch();
+	void WriteTypeMap();
+
+	std::filesystem::path GetTypeMapDefinitionsFilePath() const;
 
 	void InsertType(const HashString& name,
 		const HashString& qs_file_name,
@@ -27,5 +30,6 @@ private:
 		const std::vector<AttributeContainer>& member_attr);
 
 	TypeMap m_TypeMap;
+	QuickScriptInitParams m_InitParams;
 };
 
