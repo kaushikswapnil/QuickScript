@@ -25,6 +25,13 @@ public:
 
 	static const HashString& InvalidHashString();
 
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & m_Str;
+		ar & m_Val;
+	}
+
 private:
 	static HashValueType GetHashFor(const std::string& val);
 

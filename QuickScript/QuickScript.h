@@ -5,6 +5,7 @@
 struct QuickScriptInitParams
 {
 	std::filesystem::path ReadDirectoryPath;
+	std::filesystem::path TypeMapDirectory;
 };
 
 
@@ -15,7 +16,9 @@ public:
 	~QuickScript() = default;
 
 private:
-	void InitializeTypeMap();
+	void InitializeTypeMap(const QuickScriptInitParams& params);
+	void GenerateTypeMapFromScratch();
+
 	void InsertType(const HashString& name,
 		const HashString& qs_file_name,
 		const AttributeContainer& attr_cont,

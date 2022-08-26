@@ -50,10 +50,28 @@ struct TypeDefinition
 		const std::vector<AttributeContainer>& member_attr) :
 			m_Name(name), m_QSFileName(qs_file), m_Attributes(attr),
 			m_DefaultValue(def_val), m_Members(members), m_MemberAttributes(member_attr) {}
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & m_Name;
+		ar & m_QSFileName;
+		ar & m_Attributes;
+		ar & m_DefaultValue;
+		ar & m_Members;
+		ar & m_MemberAttributes;
+	}
 };
 
 struct TypeMap
 {
 	std::vector<TypeDefinition> m_Definitions;
 	std::unordered_map<HashString, TypeDefinitionHandle> m_NameHashToHandleMap;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & m_Definitions;
+		ar & m_NameHashToHandleMap;
+	}
 };

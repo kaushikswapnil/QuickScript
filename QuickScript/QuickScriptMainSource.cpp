@@ -12,6 +12,7 @@ int main()
 	working_folder.append("ReadDirectory\\");
 	QuickScriptInitParams params;
 	params.ReadDirectoryPath = working_folder;
+	params.TypeMapDirectory = working_folder;
 	QuickScript qs{ params };
 
 	return 0;
