@@ -5,6 +5,8 @@
 #include <optional>
 #include "HashString.h"
 #include <unordered_map>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/unordered_map.hpp>
 
 struct TypeInstanceMember;
 
@@ -35,12 +37,14 @@ typedef size_t TypeDefinitionHandle;
 typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
 struct TypeDefinition
 {
-	HashString m_Name;
-	HashString m_QSFileName;
-	AttributeContainer m_Attributes;
+	HashString m_Name{};
+	HashString m_QSFileName{};
+	AttributeContainer m_Attributes{};
 	Value m_DefaultValue{};
-	TypeDefinitionHandleContainer m_Members;
-	std::vector<AttributeContainer> m_MemberAttributes;
+	TypeDefinitionHandleContainer m_Members{};
+	std::vector<AttributeContainer> m_MemberAttributes{};
+
+	TypeDefinition() = default;
 
 	TypeDefinition(const std::string& name,
 		const std::string qs_file,

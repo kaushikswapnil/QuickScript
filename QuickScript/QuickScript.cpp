@@ -2,6 +2,7 @@
 #include "QuickScript.h"
 #include "QSParser.h"
 #include <fstream>
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
 QuickScript::QuickScript(const QuickScriptInitParams& params)
@@ -27,7 +28,8 @@ void QuickScript::InitializeTypeMap(const QuickScriptInitParams& params)
 	}
 	else
 	{
-		boost::archive::text_iarchive ia;
+		boost::archive::text_iarchive ia(input);
+		ia >> m_TypeMap;
 	}
 }
 
