@@ -13,6 +13,8 @@ int main()
 	QuickScriptInitParams params;
 	params.ReadDirectoryPath = working_folder;
 	params.TypeMapDirectory = working_folder;
+	params.OutputDirectory = working_folder.parent_path();
+	params.OutputDirectory /= "Output";
 	QuickScript qs{ params };
 
 	return 0;

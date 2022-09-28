@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "QuickScript.h"
 #include "QSParser.h"
+#include "QSExtractor.h"
 #include <fstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -12,16 +13,21 @@ QuickScript::QuickScript(const QuickScriptInitParams& params) : m_InitParams(par
 	std::vector<TypeInstanceDescription> extracted_types;
 	for (const auto& entry : std::filesystem::directory_iterator(params.ReadDirectoryPath))
 	{
-		QSParser::ParseFile(entry, extracted_types);
+		if (entry.path().extension() == ".qs")
+		{
+			QSParser::ParseFile(entry, extracted_types);
+		}
 	}
 
 	for (const auto& entry : extracted_types)
 	{
 		if (!IsValidTypeInstanceDefinition(entry))
 		{
-			InsertType(entry.m_Name, entry.m_Filename, entry.m_Attributes, {}, {}, {});
+			InsertType(entry.m_Name, entry.m_Filename, entry.m_Attributes, {}, {}, {}, {});
 		}
 	}
+
+	OutputTypeMapAsCpp();
 }
 
 QuickScript::~QuickScript()
@@ -46,20 +52,20 @@ void QuickScript::InitializeTypeMap(const QuickScriptInitParams& params)
 	}
 }
 
-void QuickScript::InsertType(const HashString& name, const HashString& qs_file_name, const AttributeContainer& attr_cont, const Value& def_value,
-		const TypeDefinitionHandleContainer& members, const std::vector<AttributeContainer>& member_attr,
+void QuickScript::InsertType(const HashString& name, const std::string& qs_file_name, const AttributeContainer& attr_cont, const Value& def_value,
+		const TypeDefinitionHandleContainer& members, const std::vector<std::string>& member_names, const std::vector<AttributeContainer>& member_attr,
 		TypeMap& out_to_type_map)
 {
-	out_to_type_map.m_Definitions.emplace_back(name, qs_file_name, attr_cont, def_value, members, member_attr);
+	out_to_type_map.m_Definitions.emplace_back(name, qs_file_name, attr_cont, def_value, members, member_names, member_attr);
 	out_to_type_map.m_NameHashToHandleMap[name] = static_cast<TypeDefinitionHandle>(out_to_type_map.m_Definitions.size() - 1);
 }
 
 void QuickScript::GenerateTypeMapFromScratch()
 {
-	InsertType(HashString{ "char" }, HashString::InvalidHashString(), {}, {}, {}, {});
-	InsertType(HashString{ "bool" }, HashString::InvalidHashString(), {}, {}, {}, {});
-	InsertType(HashString{ "int" }, HashString::InvalidHashString(), {}, {}, {}, {});
-	InsertType(HashString{ "float" }, HashString::InvalidHashString(), {}, {}, {}, {});
+	InsertType(HashString{ "char" }, HashString::InvalidHashString(), {}, {}, {}, {}, {});
+	InsertType(HashString{ "bool" }, HashString::InvalidHashString(), {}, {}, {}, {}, {});
+	InsertType(HashString{ "int" }, HashString::InvalidHashString(), {}, {}, {}, {}, {});
+	InsertType(HashString{ "float" }, HashString::InvalidHashString(), {}, {}, {}, {}, {});
 }
 
 void QuickScript::WriteTypeMap()
@@ -70,6 +76,11 @@ void QuickScript::WriteTypeMap()
 
 	boost::archive::text_oarchive oa(output);
 	oa << m_TypeMap;
+}
+
+void QuickScript::OutputTypeMapAsCpp() const
+{
+	QSExtractor::OutputTypeMapAsCpp(m_TypeMap, m_InitParams.ReadDirectoryPath, m_InitParams.OutputDirectory);
 }
 
 std::filesystem::path QuickScript::GetTypeMapDefinitionsFilePath() const

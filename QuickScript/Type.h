@@ -41,10 +41,11 @@ typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
 struct TypeDefinition
 {
 	HashString m_Name{};
-	HashString m_QSFileName{};
+	std::string m_QSFileName{};
 	AttributeContainer m_Attributes{};
 	Value m_DefaultValue{};
 	TypeDefinitionHandleContainer m_Members{};
+	std::vector<std::string> m_MemberNames{};
 	std::vector<AttributeContainer> m_MemberAttributes{};
 
 	TypeDefinition() = default;
@@ -54,9 +55,10 @@ struct TypeDefinition
 		const AttributeContainer& attr,
 		const Value& def_val,
 		const TypeDefinitionHandleContainer& members,
+		const std::vector<std::string>& member_names,
 		const std::vector<AttributeContainer>& member_attr) :
 			m_Name(name), m_QSFileName(qs_file), m_Attributes(attr),
-			m_DefaultValue(def_val), m_Members(members), m_MemberAttributes(member_attr) {}
+			m_DefaultValue(def_val), m_Members(members), m_MemberNames(member_names), m_MemberAttributes(member_attr) {}
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version)
@@ -68,6 +70,8 @@ struct TypeDefinition
 		ar & m_Members;
 		ar & m_MemberAttributes;
 	}
+
+	bool IsPrimitive() const { return m_QSFileName.empty(); }
 };
 
 struct TypeMap

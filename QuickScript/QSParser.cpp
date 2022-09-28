@@ -54,7 +54,7 @@ void QSParser::ParseFile(const std::filesystem::directory_entry& entry, std::vec
 	ExtractType(words, extracted_types);
 	for (auto& t_type : extracted_types)
 	{
-		t_type.m_Filename.Set(entry.path().string());
+		t_type.m_Filename = (entry.path().string());
 	}
 
 	out_extracted_types.insert(out_extracted_types.begin(), extracted_types.begin(), extracted_types.end());
