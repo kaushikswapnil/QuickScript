@@ -29,7 +29,19 @@ private:
 		const AttributeContainer& attr_cont,
 		const Value& def_value,
 		const TypeDefinitionHandleContainer& members,
-		const std::vector<AttributeContainer>& member_attr);
+		const std::vector<AttributeContainer>& member_attr,
+		TypeMap& out_to_type_map);
+	void InsertType(const HashString& name,
+		const HashString& qs_file_name,
+		const AttributeContainer& attr_cont,
+		const Value& def_value,
+		const TypeDefinitionHandleContainer& members,
+		const std::vector<AttributeContainer>& member_attr) { InsertType(name, qs_file_name, attr_cont, def_value, members, member_attr, m_TypeMap); }
+
+	bool IsValidTypeInstanceDefinition(const TypeInstanceDescription& instance_desc) const;
+	bool IsValidTypeInstanceDefinition(const HashString& type_name) const;
+	TypeDefinitionHandle FindHandleFor(const TypeInstanceDescription& instance_desc) const;
+	TypeDefinitionHandle FindHandleFor(const HashString& type_name) const;
 
 	TypeMap m_TypeMap;
 	QuickScriptInitParams m_InitParams;

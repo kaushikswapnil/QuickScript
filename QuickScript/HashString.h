@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Assertion.h"
 
 class HashString
 {
@@ -13,7 +14,7 @@ public:
 	operator std::string() const { return m_Str; }
 	operator HashValueType() const { return m_Val;}
 
-	bool operator==(const HashString& rhs) const { return m_Val == rhs.m_Val;}
+	bool operator==(const HashString& rhs) const { HARDASSERT(rhs.m_Str == m_Str, "This should be equal!"); return m_Val == rhs.m_Val; }
 
 	const HashValueType AsValue() const { return m_Val;}
 	std::string AsString() const { return m_Str;}

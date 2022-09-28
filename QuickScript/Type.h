@@ -35,7 +35,8 @@ struct TypeInstanceDescription
 	void Reset();
 };
 
-typedef size_t TypeDefinitionHandle;
+typedef uint32_t TypeDefinitionHandle;
+constexpr TypeDefinitionHandle INVALID_TYPE_DEFINITION_HANDLE = UINT32_MAX;
 typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
 struct TypeDefinition
 {
