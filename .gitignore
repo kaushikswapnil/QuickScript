@@ -1,5 +1,3 @@
-/GameCodeReviewConsoleApp/.vs/*
-/GameCodeReviewConsoleApp/x64/*
 *.vcxproj
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -401,5 +399,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 *.vcxproj
-GameCodeReviewConsoleApp/GameCodeReviewConsoleApp.vcxproj
-GameCodeReviewConsoleApp/GameCodeReviewConsoleApp.vcxproj
+QuickScript/ReadDirectory/Output/
