@@ -63,6 +63,8 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 
 	TypeInstanceDescription tentative_type;
 
+	std::vector<TypeInstanceDescription> tentative_types_in_file;
+
 	std::vector<std::string> unhandled_eq_nodes;
 
 	for (const auto& str : equation_nodes)
@@ -84,6 +86,8 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 			tentative_type.m_Members = members;
 			HARDASSERT(state_stack.back() == ReadTypeState::Member, "Should be reading a member here");
 			state_stack.pop_back();//this should pop back a member;
+			tentative_types_in_file.push_back(tentative_type);
+			tentative_type.Reset();
 		}
 		else if (str == "[")
 		{
@@ -97,6 +101,7 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 			if (prev_state == ReadTypeState::Class)
 			{
 				tentative_type.m_Attributes.swap(attributes);
+
 			}
 			else
 			{
@@ -142,5 +147,8 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 		}
 	}
 
-	tentative_type.Dump();
+	for (const auto& t_type : tentative_types_in_file)
+	{
+		t_type.Dump();
+	}
 }

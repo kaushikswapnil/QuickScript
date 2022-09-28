@@ -37,3 +37,12 @@ void TypeInstanceDescription::Dump() const
 	}
 	std::cout << "}";
 }
+
+void TypeInstanceDescription::Reset() 
+{
+	m_Attributes.clear();
+	m_Members.clear();
+	m_Name = m_Filename = HashString::InvalidHashString();
+	m_DefaultValue.reset();
+}
+

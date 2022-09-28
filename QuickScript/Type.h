@@ -31,6 +31,8 @@ struct TypeInstanceDescription
 	bool IsValid() const { return true; }
 
 	void Dump() const;
+
+	void Reset();
 };
 
 typedef size_t TypeDefinitionHandle;
