@@ -6,7 +6,7 @@
 #include "Type.h"
 #include <Assertion.h>
 
-void QSParser::ParseFile(const std::filesystem::directory_entry& entry)
+void QSParser::ParseFile(const std::filesystem::directory_entry& entry, std::vector<TypeInstanceDescription>& out_extracted_types)
 {
 	std::ifstream file;
 	file.open(entry, std::ios::in);
@@ -50,10 +50,10 @@ void QSParser::ParseFile(const std::filesystem::directory_entry& entry)
 		words.push_back(cur_word);
 	}
 
-	ExtractType(words);
+	ExtractType(words, out_extracted_types);
 }
 
-void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
+void QSParser::ExtractType(const std::vector<std::string>& equation_nodes, std::vector<TypeInstanceDescription>& out_extracted_types)
 {
 	std::vector<ReadTypeState> state_stack;
 	state_stack.push_back(ReadTypeState::Class);
@@ -151,4 +151,6 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 	{
 		t_type.Dump();
 	}
+
+	out_extracted_types.insert(out_extracted_types.end(), tentative_types_in_file.begin(), tentative_types_in_file.end());
 }

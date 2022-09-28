@@ -7,6 +7,7 @@ struct QuickScriptInitParams
 	std::filesystem::path ReadDirectoryPath;
 	std::filesystem::path TypeMapDirectory;
 	std::filesystem::path AttributeDirectory;
+	std::filesystem::path OutputDirectory;
 };
 
 

@@ -9,9 +9,10 @@ QuickScript::QuickScript(const QuickScriptInitParams& params) : m_InitParams(par
 {
 	InitializeTypeMap(params);
 
+	std::vector<TypeInstanceDescription> extracted_types;
 	for (const auto& entry : std::filesystem::directory_iterator(params.ReadDirectoryPath))
 	{
-		QSParser::ParseFile(entry);
+		QSParser::ParseFile(entry, extracted_types);
 	}
 }
 
