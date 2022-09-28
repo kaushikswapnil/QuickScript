@@ -72,20 +72,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;D:\PersonalProjects\Essentials\Essentials\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;D:\PersonalProjects\Essentials\Essentials;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>D:\PersonalProjects\Essentials\Essentials;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;D:\PersonalProjects\Essentials\Essentials;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>D:\PersonalProjects\Essentials\Essentials;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;D:\PersonalProjects\Essentials\Essentials;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ExternalIncludePath>D:\PersonalProjects\Essentials\Essentials;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
@@ -93,28 +104,32 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\Program Files\boost_1_80_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;D:\Program Files\boost_1_80_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Program Files\boost_1_80_0\stage\lib;D:\Program Files\boost_1_80_0\stage_x86\lib;D:\Program Files\boost_1_80_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64;D:\Program Files\boost_1_80_0\stage\lib;D:\Program Files\boost_1_80_0\stage_x86\lib;D:\Program Files\boost_1_80_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Essentials.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Essentials.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,20 +144,20 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\Program Files\boost_1_80_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;D:\Program Files\boost_1_80_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Program Files\boost_1_80_0\stage\lib;D:\Program Files\boost_1_80_0\stage_x86\lib;D:\Program Files\boost_1_80_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64;D:\Program Files\boost_1_80_0\stage\lib;D:\Program Files\boost_1_80_0\stage_x86\lib;D:\Program Files\boost_1_80_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Essentials.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -151,12 +166,16 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\Program Files\boost_1_80_0;D:\PersonalProjects\Essentials\Essentials\Include;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\Program Files\boost_1_80_0\lib64-msvc-14.3;D:\PersonalProjects\Essentials\x64;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Essentials.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

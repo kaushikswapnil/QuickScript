@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include "Type.h"
+#include <Assertion.h>
 
 void QSParser::ParseFile(const std::filesystem::directory_entry& entry)
 {
@@ -81,14 +82,17 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 		else if (str == "}")
 		{
 			tentative_type.m_Members = members;
+			HARDASSERT(state_stack.back() == ReadTypeState::Member, "Should be reading a member here");
 			state_stack.pop_back();//this should pop back a member;
 		}
 		else if (str == "[")
 		{
+			HARDASSERT(state_stack.back() == ReadTypeState::Member || state_stack.back() == ReadTypeState::Class, "Should be reading member/class here");
 			state_stack.push_back(ReadTypeState::Attribute);
 		}
 		else if (str == "]")
 		{
+			HARDASSERT(state_stack.back() == ReadTypeState::Attribute, "Should be reading attribtute here");
 			state_stack.pop_back();
 			if (prev_state == ReadTypeState::Class)
 			{
@@ -103,6 +107,7 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes)
 		{
 			if (cur_state == ReadTypeState::Member)
 			{
+				HARDASSERT(unhandled_eq_nodes.size() > 1, "We should have atleast the type and name");
 				Value default_val;
 				if (unhandled_eq_nodes.size() > 2)
 				{
