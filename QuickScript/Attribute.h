@@ -8,7 +8,7 @@ struct Value
 {
 	HashString ValueString{};
 
-	bool IsValid() const { return ValueString.AsString().size() > 0; }
+	bool IsValid() const { return ValueString.IsValid(); }
 
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)

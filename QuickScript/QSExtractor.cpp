@@ -28,7 +28,7 @@ void QSExtractor::OutputTypeMapAsCpp(const TypeMap& type_map, const std::filesys
 			for (auto member_iter = 0; member_iter < entry.m_Members.size(); ++ member_iter)
 			{
 				const auto member_handle = entry.m_Members[member_iter];
-				cpp_file << '\t' << type_map.m_Definitions[member_handle].m_Name.AsString() << ' ' << entry.m_MemberNames[member_iter] << ";\n";
+				cpp_file << '\t' << type_map.m_Definitions[member_handle].m_Name.AsString() << ' ' << entry.m_MemberNames[member_iter].AsString() << ";\n";
 			}
 			cpp_file << "}\n" << qs_gen_area;
 			cpp_file.close();
