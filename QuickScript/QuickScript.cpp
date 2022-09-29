@@ -21,8 +21,9 @@ QuickScript::QuickScript(const QuickScriptInitParams& params) : m_InitParams(par
 
 	for (const auto& entry : extracted_types)
 	{
-		if (!IsValidTypeInstanceDefinition(entry))
+		if (!IsExistingTypeDefinition(entry))
 		{
+			TypeDefinitionHandleContainer members;
 			InsertType(entry.m_Name, entry.m_Filename, entry.m_Attributes, {}, {}, {}, {});
 		}
 	}
@@ -53,7 +54,7 @@ void QuickScript::InitializeTypeMap(const QuickScriptInitParams& params)
 }
 
 void QuickScript::InsertType(const HashString& name, const std::string& qs_file_name, const AttributeContainer& attr_cont, const Value& def_value,
-		const TypeDefinitionHandleContainer& members, const std::vector<std::string>& member_names, const std::vector<AttributeContainer>& member_attr,
+		const TypeDefinitionHandleContainer& members, const TypeDefinitionMemberNamesContainer& member_names, const TypeDefinitionMemberAttributesContainer& member_attr,
 		TypeMap& out_to_type_map)
 {
 	out_to_type_map.m_Definitions.emplace_back(name, qs_file_name, attr_cont, def_value, members, member_names, member_attr);
@@ -90,12 +91,12 @@ std::filesystem::path QuickScript::GetTypeMapDefinitionsFilePath() const
 	return type_map_file_path;
 }
 
-bool QuickScript::IsValidTypeInstanceDefinition(const TypeInstanceDescription& instance_desc) const
+bool QuickScript::IsExistingTypeDefinition(const TypeInstanceDescription& instance_desc) const
 {
-	return IsValidTypeInstanceDefinition(instance_desc.m_Name);
+	return IsExistingTypeDefinition(instance_desc.m_Name);
 }
 
-bool QuickScript::IsValidTypeInstanceDefinition(const HashString& type_name) const
+bool QuickScript::IsExistingTypeDefinition(const HashString& type_name) const
 {
 	return FindHandleFor(type_name) != INVALID_TYPE_DEFINITION_HANDLE;
 }

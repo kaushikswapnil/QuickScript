@@ -38,6 +38,10 @@ struct TypeInstanceDescription
 typedef uint32_t TypeDefinitionHandle;
 constexpr TypeDefinitionHandle INVALID_TYPE_DEFINITION_HANDLE = UINT32_MAX;
 typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
+
+typedef std::vector<std::string> TypeDefinitionMemberNamesContainer;
+typedef std::vector<AttributeContainer> TypeDefinitionMemberAttributesContainer;
+
 struct TypeDefinition
 {
 	HashString m_Name{};
@@ -45,8 +49,8 @@ struct TypeDefinition
 	AttributeContainer m_Attributes{};
 	Value m_DefaultValue{};
 	TypeDefinitionHandleContainer m_Members{};
-	std::vector<std::string> m_MemberNames{};
-	std::vector<AttributeContainer> m_MemberAttributes{};
+	TypeDefinitionMemberNamesContainer m_MemberNames{};
+	TypeDefinitionMemberAttributesContainer m_MemberAttributes{};
 
 	TypeDefinition() = default;
 
@@ -55,8 +59,8 @@ struct TypeDefinition
 		const AttributeContainer& attr,
 		const Value& def_val,
 		const TypeDefinitionHandleContainer& members,
-		const std::vector<std::string>& member_names,
-		const std::vector<AttributeContainer>& member_attr) :
+		const TypeDefinitionMemberNamesContainer& member_names,
+		const TypeDefinitionMemberAttributesContainer& member_attr) :
 			m_Name(name), m_QSFileName(qs_file), m_Attributes(attr),
 			m_DefaultValue(def_val), m_Members(members), m_MemberNames(member_names), m_MemberAttributes(member_attr) {}
 
