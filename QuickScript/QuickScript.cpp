@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "QuickScript.h"
 #include "QSParser.h"
-#include "QSExtractor.h"
+#include "QSExporter.h"
 #include <fstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -100,7 +100,7 @@ void QuickScript::WriteTypeMap()
 
 void QuickScript::OutputTypeMapAsCpp() const
 {
-	QSExtractor::OutputTypeMapAsCpp(m_TypeMap, m_InitParams.ReadDirectoryPath, m_InitParams.OutputDirectory);
+	QSExporter::ExportTypeMap(m_TypeMap, m_InitParams.ReadDirectoryPath, m_InitParams.OutputDirectory);
 }
 
 std::filesystem::path QuickScript::GetTypeMapDefinitionsFilePath() const

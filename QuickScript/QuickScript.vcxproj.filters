@@ -35,7 +35,7 @@
     <ClInclude Include="QuickScript.h">
       <Filter>Source Files\General</Filter>
     </ClInclude>
-    <ClInclude Include="QSExtractor.h">
+    <ClInclude Include="QSExporter.h">
       <Filter>Source Files\General</Filter>
     </ClInclude>
   </ItemGroup>
@@ -61,7 +61,7 @@
     <ClCompile Include="QuickScript.cpp">
       <Filter>Source Files\General</Filter>
     </ClCompile>
-    <ClCompile Include="QSExtractor.cpp">
+    <ClCompile Include="QSExporter.cpp">
       <Filter>Source Files\General</Filter>
     </ClCompile>
   </ItemGroup>

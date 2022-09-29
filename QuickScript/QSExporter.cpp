@@ -1,7 +1,7 @@
-#include "QSExtractor.h"
+#include "QSExporter.h"
 #include <fstream>
 
-void QSExtractor::OutputTypeMapAsCpp(const TypeMap& type_map, const std::filesystem::path& read_directory, const std::filesystem::path& output_directory)
+void QSExporter::ExportTypeMap(const TypeMap& type_map, const std::filesystem::path& read_directory, const std::filesystem::path& output_directory)
 {
 	for (const auto& entry : type_map.m_Definitions)
 	{

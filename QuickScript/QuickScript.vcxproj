@@ -181,7 +181,7 @@
   <ItemGroup>
     <ClInclude Include="Attribute.h" />
     <ClInclude Include="HashString.h" />
-    <ClInclude Include="QSExtractor.h" />
+    <ClInclude Include="QSExporter.h" />
     <ClInclude Include="QSParser.h" />
     <ClInclude Include="QuickScript.h" />
     <ClInclude Include="Type.h" />
@@ -189,7 +189,7 @@
   <ItemGroup>
     <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="HashString.cpp" />
-    <ClCompile Include="QSExtractor.cpp" />
+    <ClCompile Include="QSExporter.cpp" />
     <ClCompile Include="QSParser.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
