@@ -34,3 +34,13 @@ struct AttributeTag
 	}
 };
 
+struct Attribute
+{
+	struct Flags
+	{
+		unsigned int IsPrimitiveApplicable : 1;
+		unsigned int IsComplexApplicable : 1;
+		unsigned int IsGroupable : 1;
+	} m_Flags;
+};
+

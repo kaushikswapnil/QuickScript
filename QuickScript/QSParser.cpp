@@ -65,7 +65,7 @@ void QSParser::ExtractType(const std::vector<std::string>& equation_nodes, std::
 	std::vector<ReadTypeState> state_stack;
 	state_stack.push_back(ReadTypeState::Class);
 
-	AttributeContainer attributes;
+	AttributeTagContainer attributes;
 	TypeInstanceMemberContainer members;
 
 	TypeInstanceDescription tentative_type;

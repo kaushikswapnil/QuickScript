@@ -28,14 +28,14 @@ private:
 
 	void InsertType(const HashString& name,
 		const std::string& qs_file_name,
-		const AttributeContainer& attr_cont,
+		const AttributeTagContainer& attr_cont,
 		const TypeDefinitionHandleContainer& members,
 		const TypeDefinitionMemberNamesContainer& member_names,
 		const TypeDefinitionMemberAttributesContainer& member_attr,
 		TypeMap& out_to_type_map);
 	void InsertType(const HashString& name,
 		const std::string& qs_file_name,
-		const AttributeContainer& attr_cont,
+		const AttributeTagContainer& attr_cont,
 		const TypeDefinitionHandleContainer& members,
 		const TypeDefinitionMemberNamesContainer& member_names,
 		const TypeDefinitionMemberAttributesContainer& member_attr) { InsertType(name, qs_file_name, attr_cont, members, member_names, member_attr, m_TypeMap); }

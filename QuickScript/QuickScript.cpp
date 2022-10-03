@@ -72,7 +72,7 @@ void QuickScript::InitializeTypeMap(const QuickScriptInitParams& params)
 	}
 }
 
-void QuickScript::InsertType(const HashString& name, const std::string& qs_file_name, const AttributeContainer& attr_cont,
+void QuickScript::InsertType(const HashString& name, const std::string& qs_file_name, const AttributeTagContainer& attr_cont,
 		const TypeDefinitionHandleContainer& members, const TypeDefinitionMemberNamesContainer& member_names, const TypeDefinitionMemberAttributesContainer& member_attr,
 		TypeMap& out_to_type_map)
 {

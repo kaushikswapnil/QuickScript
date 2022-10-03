@@ -10,21 +10,21 @@
 
 struct TypeInstanceMember;
 
-typedef std::vector<AttributeTag> AttributeContainer;
+typedef std::vector<AttributeTag> AttributeTagContainer;
 typedef std::vector<TypeInstanceMember> TypeInstanceMemberContainer;
 
 struct TypeInstanceMember
 {
 	HashString m_Name{};
 	HashString	m_TypeName{};
-	AttributeContainer m_Attributes{};
+	AttributeTagContainer m_Attributes{};
 	Value m_DefaultValue{};
 };
 
 struct TypeInstanceDescription
 {
 	std::optional<Value> m_DefaultValue{};
-	AttributeContainer m_Attributes{};
+	AttributeTagContainer m_Attributes{};
 	TypeInstanceMemberContainer m_Members{};
 	HashString m_Name;
 	HashString m_Filename;
@@ -40,13 +40,13 @@ constexpr TypeDefinitionHandle INVALID_TYPE_DEFINITION_HANDLE = UINT32_MAX;
 typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
 
 typedef std::vector<HashString> TypeDefinitionMemberNamesContainer;
-typedef std::vector<AttributeContainer> TypeDefinitionMemberAttributesContainer;
+typedef std::vector<AttributeTagContainer> TypeDefinitionMemberAttributesContainer;
 
 struct TypeDefinition
 {
 	HashString m_Name{};
 	std::string m_QSFileName{};
-	AttributeContainer m_Attributes{};
+	AttributeTagContainer m_Attributes{};
 	TypeDefinitionHandleContainer m_Members{};
 	TypeDefinitionMemberNamesContainer m_MemberNames{};
 	TypeDefinitionMemberAttributesContainer m_MemberAttributes{};
@@ -55,7 +55,7 @@ struct TypeDefinition
 
 	TypeDefinition(const std::string& name,
 		const std::string qs_file,
-		const AttributeContainer& attr,
+		const AttributeTagContainer& attr,
 		const TypeDefinitionHandleContainer& members,
 		const TypeDefinitionMemberNamesContainer& member_names,
 		const TypeDefinitionMemberAttributesContainer& member_attr) :
