@@ -186,4 +186,6 @@ bool QuickScript::TypeInstanceDescriptionHasValidSyntax(const TypeInstanceDescri
 		if (!IsSyntacticallyValidVariableName(member.m_Name) || !IsSyntacticallyValidTypeName(member.m_TypeName))
 			return false;
 	}
+
+	return true;
 }
