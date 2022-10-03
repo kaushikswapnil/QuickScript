@@ -5,6 +5,7 @@
 #include <fstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <cctype>
 
 QuickScript::QuickScript(const QuickScriptInitParams& params) : m_InitParams(params)
 {
@@ -21,29 +22,32 @@ QuickScript::QuickScript(const QuickScriptInitParams& params) : m_InitParams(par
 
 	for (const auto& entry : extracted_types)
 	{
-		if (!IsExistingTypeDefinition(entry))
+		if (TypeInstanceDescriptionHasValidSyntax(entry))
 		{
-			TypeDefinitionHandleContainer members;
-			TypeDefinitionMemberAttributesContainer member_attributes;
-			TypeDefinitionMemberNamesContainer member_names;
-			members.reserve(entry.m_Members.size());
-			member_attributes.reserve(entry.m_Members.size());
-			member_names.reserve(entry.m_Members.size());
-			for (const auto& type_instance_member : entry.m_Members)
+			if (!IsExistingTypeDefinition(entry))
 			{
-				auto instance_member_handle = FindHandleFor(type_instance_member.m_TypeName);
-				if (instance_member_handle != INVALID_TYPE_DEFINITION_HANDLE)
+				TypeDefinitionHandleContainer members;
+				TypeDefinitionMemberAttributesContainer member_attributes;
+				TypeDefinitionMemberNamesContainer member_names;
+				members.reserve(entry.m_Members.size());
+				member_attributes.reserve(entry.m_Members.size());
+				member_names.reserve(entry.m_Members.size());
+				for (const auto& type_instance_member : entry.m_Members)
 				{
-					members.push_back(instance_member_handle);
-					member_attributes.push_back(type_instance_member.m_Attributes);
-					member_names.push_back(type_instance_member.m_Name);
+					auto instance_member_handle = FindHandleFor(type_instance_member.m_TypeName);
+					if (instance_member_handle != INVALID_TYPE_DEFINITION_HANDLE)
+					{
+						members.push_back(instance_member_handle);
+						member_attributes.push_back(type_instance_member.m_Attributes);
+						member_names.push_back(type_instance_member.m_Name);
+					}
+					else
+					{
+						HARDASSERT(false, "We should have an valid type def here!");
+					}
 				}
-				else
-				{
-					HARDASSERT(false, "We should have an valid type def here!");
-				}
+				InsertType(entry.m_Name, entry.m_Filename, entry.m_Attributes, members, member_names, member_attributes);
 			}
-			InsertType(entry.m_Name, entry.m_Filename, entry.m_Attributes, members, member_names, member_attributes);
 		}
 	}
 
@@ -135,4 +139,51 @@ TypeDefinitionHandle QuickScript::FindHandleFor(const HashString& type_name) con
 	}
 
 	return INVALID_TYPE_DEFINITION_HANDLE;
+}
+
+bool QuickScript::MeetsSynctacticallyValidNameCriteria(const std::string& name_as_string)
+{
+	if (name_as_string.empty())
+		return false;
+
+	if (std::isdigit(name_as_string[0]))
+		return false;
+
+	return true;
+}
+
+bool QuickScript::IsSyntacticallyValidTypeName(const HashString& type_name)
+{
+	const auto as_string = type_name.AsString();
+	if (!MeetsSynctacticallyValidNameCriteria(as_string))
+		return false;
+
+	if (std::isdigit(as_string[0]))
+		return false;
+
+	return true;
+}
+
+bool QuickScript::IsSyntacticallyValidVariableName(const HashString& var_name)
+{
+	const auto as_string = var_name.AsString();
+	if (!MeetsSynctacticallyValidNameCriteria(as_string))
+		return false;
+
+	return true;
+}
+
+bool QuickScript::TypeInstanceDescriptionHasValidSyntax(const TypeInstanceDescription& instance)
+{
+	//check name
+	if (!IsSyntacticallyValidTypeName(instance.m_Name))
+		return false;
+
+	//check attributes
+	//check member name syntax validatity
+	for (const auto& member : instance.m_Members)
+	{
+		if (!IsSyntacticallyValidVariableName(member.m_Name) || !IsSyntacticallyValidTypeName(member.m_TypeName))
+			return false;
+	}
 }

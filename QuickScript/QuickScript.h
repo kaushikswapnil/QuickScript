@@ -45,6 +45,11 @@ private:
 	TypeDefinitionHandle FindHandleFor(const TypeInstanceDescription& instance_desc) const;
 	TypeDefinitionHandle FindHandleFor(const HashString& type_name) const;
 
+	bool MeetsSynctacticallyValidNameCriteria(const std::string& name_as_string);
+	bool IsSyntacticallyValidTypeName(const HashString& type_name);
+	bool IsSyntacticallyValidVariableName(const HashString& var_name);
+	bool TypeInstanceDescriptionHasValidSyntax(const TypeInstanceDescription& instance);
+
 	TypeMap m_TypeMap;
 	QuickScriptInitParams m_InitParams;
 };
