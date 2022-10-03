@@ -100,7 +100,8 @@ void QuickScript::WriteTypeMap()
 
 void QuickScript::OutputTypeMapAsCpp() const
 {
-	QSExporter::ExportTypeMap(m_TypeMap, m_InitParams.ReadDirectoryPath, m_InitParams.OutputDirectory);
+	CppQSExporter exporter{};
+	exporter.ExportTypeMap(m_TypeMap, m_InitParams.ReadDirectoryPath, m_InitParams.OutputDirectory);
 }
 
 std::filesystem::path QuickScript::GetTypeMapDefinitionsFilePath() const

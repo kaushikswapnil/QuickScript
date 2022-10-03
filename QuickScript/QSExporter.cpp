@@ -26,7 +26,9 @@ static const std::string QS_USER_AREA_END{ "QS_USER_AREA_END\n" };
 
 struct FileSectionGenerationParams
 {
-	FileSectionGenerationParams(const TypeDefinition& assc_type, const TypeMap& type_map) : m_AssociatedType(assc_type), m_TypeMap(type_map) {}
+	FileSectionGenerationParams(const TypeDefinition& assc_type, const TypeMap& type_map) : m_AssociatedType(assc_type),
+						m_TypeMap(type_map),
+						m_FileSectionType(FileSectionTypes::Count) {}
 
 	const TypeDefinition& m_AssociatedType;
 	const TypeMap& m_TypeMap;
@@ -57,6 +59,28 @@ void CloseQSSection(FileSection& section, const bool is_user_sec = false)
 	}
 }
 
+void InsertAccessModifier(FileSection& section, const FileSectionTypes section_type)
+{
+	switch (section_type)
+	{
+	case FileSectionTypes::PublicMethods:
+	case FileSectionTypes::PublicMembers:
+	section += "public:\n";
+	break;
+	case FileSectionTypes::PrivateMethods:
+	case FileSectionTypes::PrivateMembers:
+	section += "private:\n";
+	break;
+	case FileSectionTypes::ProtectedMethods:
+	case FileSectionTypes::ProtectedMembers:
+	section += "protected:\n";
+	break;
+	default:
+		HARDASSERT(false, "this should not have happened!");
+		break;
+	}
+}
+
 void FillSection(FileSection& section, const FileSectionGenerationParams& gen_params)
 {
 	OpenQSSection(section);
@@ -77,7 +101,7 @@ void FillSection(FileSection& section, const FileSectionGenerationParams& gen_pa
 		break;
 		case FileSectionTypes::PublicMethods: 
 		{
-			section += "public:\n";
+			InsertAccessModifier(section, gen_params.m_FileSectionType);
 			for (auto member_iter = 0; member_iter < gen_params.m_AssociatedType.m_Members.size(); ++member_iter)
 			{
 				const auto member_handle = gen_params.m_AssociatedType.m_Members[member_iter];
@@ -103,7 +127,7 @@ void FillSection(FileSection& section, const FileSectionGenerationParams& gen_pa
 		break;
 		case FileSectionTypes::ProtectedMembers:
 		{
-			section += "protected:\n";
+			InsertAccessModifier(section, gen_params.m_FileSectionType);
 			for (auto member_iter = 0; member_iter < gen_params.m_AssociatedType.m_Members.size(); ++member_iter)
 			{
 				const auto member_handle = gen_params.m_AssociatedType.m_Members[member_iter];
@@ -134,7 +158,7 @@ std::filesystem::path GetExportedFilePathForType(const TypeDefinition& type, con
 	return cpp_file_path;
 }
 
-void QSExporter::ExportTypeMap(const TypeMap& type_map, const std::filesystem::path& read_directory, const std::filesystem::path& output_directory)
+void CppQSExporter::ExportTypeMap(const TypeMap& type_map, const std::filesystem::path& read_directory, const std::filesystem::path& output_directory)
 {
 	for (const auto& entry : type_map.m_Definitions)
 	{
