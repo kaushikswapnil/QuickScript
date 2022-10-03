@@ -17,13 +17,13 @@ struct Value
 	}
 };
 
-struct Attribute
+struct AttributeTag
 {
-	Attribute(const HashString& name) : m_Name(name) {}
+	AttributeTag(const HashString& name) : m_Name(name) {}
 	HashString m_Name{};
 	std::vector<Value> m_Values{};
 
-	Attribute() = default;
+	AttributeTag() = default;
 	bool IsValid() const { return true; }
 
 	template<class Archive>

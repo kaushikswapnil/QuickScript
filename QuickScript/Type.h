@@ -10,7 +10,7 @@
 
 struct TypeInstanceMember;
 
-typedef std::vector<Attribute> AttributeContainer;
+typedef std::vector<AttributeTag> AttributeContainer;
 typedef std::vector<TypeInstanceMember> TypeInstanceMemberContainer;
 
 struct TypeInstanceMember
