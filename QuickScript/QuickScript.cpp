@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "QuickScript.h"
 #include "QSParser.h"
-#include "QSExporter.h"
+#include "CppQSExporter.h"
 #include <fstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>

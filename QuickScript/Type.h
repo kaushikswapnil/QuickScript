@@ -80,6 +80,7 @@ struct TypeMap
 {
 	std::vector<TypeDefinition> m_Definitions;
 	std::unordered_map<HashString, TypeDefinitionHandle> m_NameHashToHandleMap;
+	std::vector<AttributeDefinition> m_AttributeDefinitions;
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version)

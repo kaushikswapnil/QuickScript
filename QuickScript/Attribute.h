@@ -34,7 +34,7 @@ struct AttributeTag
 	}
 };
 
-struct Attribute
+struct AttributeDefinition
 {
 	struct Flags
 	{

@@ -18,6 +18,9 @@
     <Filter Include="Source Files\General">
       <UniqueIdentifier>{b3134ce0-35b3-47e2-96e2-b7fe9b062c23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Exporters">
+      <UniqueIdentifier>{79de9ad9-4eaa-4ea1-9026-055da15e8390}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Type.h">
@@ -37,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="QSExporter.h">
       <Filter>Source Files\General</Filter>
+    </ClInclude>
+    <ClInclude Include="CppQSExporter.h">
+      <Filter>Source Files\Exporters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +69,9 @@
     </ClCompile>
     <ClCompile Include="QSExporter.cpp">
       <Filter>Source Files\General</Filter>
+    </ClCompile>
+    <ClCompile Include="CppQSExporter.cpp">
+      <Filter>Source Files\Exporters</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

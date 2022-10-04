@@ -180,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Attribute.h" />
+    <ClInclude Include="CppQSExporter.h" />
     <ClInclude Include="HashString.h" />
     <ClInclude Include="QSExporter.h" />
     <ClInclude Include="QSParser.h" />
@@ -188,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Attribute.cpp" />
+    <ClCompile Include="CppQSExporter.cpp" />
     <ClCompile Include="HashString.cpp" />
     <ClCompile Include="QSExporter.cpp" />
     <ClCompile Include="QSParser.cpp" />
