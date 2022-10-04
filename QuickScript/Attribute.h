@@ -42,5 +42,7 @@ struct Attribute
 		unsigned int IsComplexApplicable : 1;
 		unsigned int IsGroupable : 1;
 	} m_Flags;
+
+	bool IsApplicableValueSet(const std::vector<Value>& value_set) const { return true; }
 };
 

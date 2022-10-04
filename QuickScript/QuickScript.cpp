@@ -152,22 +152,28 @@ bool QuickScript::MeetsSynctacticallyValidNameCriteria(const std::string& name_a
 	return true;
 }
 
-bool QuickScript::IsSyntacticallyValidTypeName(const HashString& type_name)
+bool QuickScript::IsSyntacticallyValidTypeName(const std::string& type_name)
 {
-	const auto as_string = type_name.AsString();
-	if (!MeetsSynctacticallyValidNameCriteria(as_string))
+	if (!MeetsSynctacticallyValidNameCriteria(type_name))
 		return false;
 
-	if (std::isdigit(as_string[0]))
+	if (std::isdigit(type_name[0]))
 		return false;
 
 	return true;
 }
 
-bool QuickScript::IsSyntacticallyValidVariableName(const HashString& var_name)
+bool QuickScript::IsSyntacticallyValidVariableName(const std::string& var_name)
 {
-	const auto as_string = var_name.AsString();
-	if (!MeetsSynctacticallyValidNameCriteria(as_string))
+	if (!MeetsSynctacticallyValidNameCriteria(var_name))
+		return false;
+
+	return true;
+}
+
+bool QuickScript::IsSyntacticallyValidAttributeName(const std::string& attr_name)
+{
+	if (!MeetsSynctacticallyValidNameCriteria(attr_name))
 		return false;
 
 	return true;
@@ -176,14 +182,20 @@ bool QuickScript::IsSyntacticallyValidVariableName(const HashString& var_name)
 bool QuickScript::TypeInstanceDescriptionHasValidSyntax(const TypeInstanceDescription& instance)
 {
 	//check name
-	if (!IsSyntacticallyValidTypeName(instance.m_Name))
+	if (!IsSyntacticallyValidTypeName(instance.m_Name.AsString()))
 		return false;
 
 	//check attributes
+	for (const auto& attr_tag : instance.m_Attributes)
+	{
+		if (!IsSyntacticallyValidAttributeName(attr_tag.m_Name.AsString()))
+			return false;
+	}
+	
 	//check member name syntax validatity
 	for (const auto& member : instance.m_Members)
 	{
-		if (!IsSyntacticallyValidVariableName(member.m_Name) || !IsSyntacticallyValidTypeName(member.m_TypeName))
+		if (!IsSyntacticallyValidVariableName(member.m_Name.AsString()) || !IsSyntacticallyValidTypeName(member.m_TypeName.AsString()))
 			return false;
 	}
 

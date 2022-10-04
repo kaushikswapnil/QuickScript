@@ -46,8 +46,9 @@ private:
 	TypeDefinitionHandle FindHandleFor(const HashString& type_name) const;
 
 	bool MeetsSynctacticallyValidNameCriteria(const std::string& name_as_string);
-	bool IsSyntacticallyValidTypeName(const HashString& type_name);
-	bool IsSyntacticallyValidVariableName(const HashString& var_name);
+	bool IsSyntacticallyValidTypeName(const std::string& type_name);
+	bool IsSyntacticallyValidVariableName(const std::string& var_name);
+	bool IsSyntacticallyValidAttributeName(const std::string& var_name);
 	bool TypeInstanceDescriptionHasValidSyntax(const TypeInstanceDescription& instance);
 
 	TypeMap m_TypeMap;
