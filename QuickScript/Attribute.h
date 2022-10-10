@@ -17,11 +17,13 @@ struct Value
 	}
 };
 
+typedef std::vector<Value> AttributeValueContainer;
+
 struct AttributeTag
 {
 	AttributeTag(const HashString& name) : m_Name(name) {}
 	HashString m_Name{};
-	std::vector<Value> m_Values{};
+	AttributeValueContainer m_Values{};
 
 	AttributeTag() = default;
 	bool IsValid() const { return true; }
@@ -38,10 +40,14 @@ struct AttributeDefinition
 {
 	struct Flags
 	{
-		unsigned int IsPrimitiveApplicable : 1;
-		unsigned int IsComplexApplicable : 1;
-		unsigned int IsGroupable : 1;
+		unsigned int IsPrimitiveApplicable : 1 = 1;
+		unsigned int IsComplexApplicable : 1 = 1;
+		unsigned int IsGroupable : 1 = 0;
 	} m_Flags;
+
+	HashString m_Name;
+	uint8_t m_MaximumValueCount;
+	uint8_t m_MinimumValueCount;
 
 	bool IsApplicableValueSet(const std::vector<Value>& value_set) const { return true; }
 };

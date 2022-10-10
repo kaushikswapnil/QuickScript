@@ -42,6 +42,15 @@ typedef std::vector<TypeDefinitionHandle> TypeDefinitionHandleContainer;
 typedef std::vector<HashString> TypeDefinitionMemberNamesContainer;
 typedef std::vector<AttributeTagContainer> TypeDefinitionMemberAttributesContainer;
 
+typedef uint32_t AttributeDefinitionHandle;
+const AttributeDefinitionHandle INVALID_ATTRIBUTE_DEFINITION_HANDLE = UINT32_MAX;
+
+struct AttributeReference
+{
+	AttributeDefinitionHandle m_DefinitionHandle;
+
+};
+
 struct TypeDefinition
 {
 	HashString m_Name{};
