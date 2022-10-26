@@ -400,3 +400,5 @@ FodyWeavers.xsd
 *.sln.iml
 *.vcxproj
 QuickScript/ReadDirectory/Output/
+.vs/
+QuickScript/Debug/
