@@ -1,4 +1,0 @@
-﻿     Creating library D:\PersonalProjects\QuickScript\Debug\QuickScript.lib and object D:\PersonalProjects\QuickScript\Debug\QuickScript.exp
-QSParser.obj : error LNK2019: unresolved external symbol "public: static void __cdecl LogSystem::PrintLog(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?PrintLog@LogSystem@@SAXABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) referenced in function "void __cdecl Essentials::Error::ReportAssertion(struct Essentials::Error::AssertLevel const &,char const * const,char const * const,char const * const,long)" (?ReportAssertion@Error@Essentials@@YAXABUAssertLevel@12@QBD11J@Z)
-D:\PersonalProjects\Essentials\x64\Debug\Essentials.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
-D:\PersonalProjects\QuickScript\Debug\QuickScript.exe : fatal error LNK1120: 1 unresolved externals
