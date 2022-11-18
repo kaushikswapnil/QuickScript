@@ -13,6 +13,7 @@ struct TypeInstanceMember;
 typedef std::vector<AttributeTag> AttributeTagContainer;
 typedef std::vector<TypeInstanceMember> TypeInstanceMemberContainer;
 
+//describes a member of a type
 struct TypeInstanceMember
 {
 	HashString m_Name{};
@@ -21,6 +22,7 @@ struct TypeInstanceMember
 	Value m_DefaultValue{};
 };
 
+//describes a type, but isnt validated or concrete yet.
 struct TypeInstanceDescription
 {
 	std::optional<Value> m_DefaultValue{};
@@ -51,6 +53,7 @@ struct AttributeReference
 
 };
 
+//an actual valid type definition
 struct TypeDefinition
 {
 	HashString m_Name{};
