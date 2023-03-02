@@ -29,43 +29,82 @@ namespace QuickScript.Utils
             public static explicit operator HashValueType(uint val) => new HashValueType(val);
         }
 
-        private string m_Str;
-        private HashValueType m_Hash;
+        private string Str { get; set; }
+        private HashValueType Hash { get; set; }
 
-        public readonly HashValueType InvalidHashValue = new HashValueType();
-        public readonly HashString InvalidHashString = new HashString();
+        public readonly static HashValueType InvalidHashValue = new HashValueType();
+        public readonly static HashString InvalidHashString = new HashString();
 
-        private static Dictionary<HashValueType, string> m_HashedStringDictionary = new Dictionary<HashValueType, string>();
+        private static Dictionary<HashValueType, string> CreateHashedStringDictionary()
+        {
+            var ret_val = new Dictionary<HashValueType, string>();
+            ret_val[InvalidHashValue] = "Invalid";
+            return ret_val;
+        }
+
+        private static Dictionary<HashValueType, string> HashedStringDictionary = CreateHashedStringDictionary();
 
         public HashString()
         {
-            this.m_Str = "";
-            this.m_Hash = InvalidHashValue;
+            this.Str = "";
+            this.Hash = InvalidHashValue;
         }
 
         public HashString(in string str)
         {
-            this.m_Str = str;
-            m_Hash = Hash(str);
+            this.Str = str;
+            this.Hash = GenerateHash(str);
         }
 
         public HashString(in string str, in HashValueType hash)
         {
-            m_Str = str;
-            m_Hash = hash;
+            Str = str;
+            Hash = hash;
+            VerifyUniqueHash(str, hash);
         }
 
-        public static bool VerifyUniqueHash(in string str, in HashValueType hash)
+        public void Reset(in string str)
         {
-            if (m_HashedStringDictionary.ContainsKey(hash))
+            Hash = GenerateHash(str);
+            Str = str;
+        }
+
+        public void Reset(in HashValueType hash)
+        {
+            Hash = hash;
+            Str = GetStringFromHash(hash);
+        }
+        public void Reset(in string str, in HashValueType hash)
+        {
+            Str = str; Hash = hash;
+            VerifyUniqueHash(str, hash);
+        }
+
+        public bool IsValid()
+        {
+            return Str.Length > 0 || Hash != InvalidHashValue;
+        }
+
+        private string GetStringFromHash(in HashValueType hash)
+        {
+            if (HashedStringDictionary.ContainsKey(hash) == false)
             {
-                return str == m_HashedStringDictionary[hash];
+                return "Not Found";
             }
 
-            m_HashedStringDictionary[hash] = str;
+            return HashedStringDictionary[hash];
+        }
+        public static bool VerifyUniqueHash(in string str, in HashValueType hash)
+        {
+            if (HashedStringDictionary.ContainsKey(hash))
+            {
+                return str == HashedStringDictionary[hash];
+            }
+
+            HashedStringDictionary[hash] = str;
             return true;
         }
-        public static HashValueType Hash(in string str)
+        public static HashValueType GenerateHash(in string str)
         {
             using (var hasher = System.Security.Cryptography.MD5.Create())
             {
