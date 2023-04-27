@@ -52,6 +52,13 @@ namespace QuickScript
         public HashString Name { get; set;}
         public List<AttributeInstanceDescription> Attributes { get; set; }
         public string Value { get; set; }
-        public List<TypeInstanceDescription> Members { get; set; }
+
+        public class MemberDescription
+        {
+            HashString Name { get; set; }
+            string Value { get; set; }
+            TypeInstanceDescription TypeDescription { get; set; }
+        }
+        public List<MemberDescription> Members { get; set; }
     }
 }

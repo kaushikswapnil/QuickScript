@@ -39,6 +39,8 @@ namespace QuickScript
                         }
                         tokens.Add(Char.ToString(c));
                         break;
+                    case '=':
+                        break; //we ignore the equal symbol
                     default:
                         curWord += c;
                         break;
@@ -57,13 +59,21 @@ namespace QuickScript
         {
             ReadState prevState = ReadState.None;
             ReadState readState = ReadState.Class;
-            List<AttributeInstanceDescription> attributes = new List<AttributeInstanceDescription>();
+            
+            Stack<string> unhandled_tokens = new Stack<string>();
+
+            List<TypeInstanceDescription> retVal = new List<TypeInstanceDescription>();
 
             void ChangeReadState(ReadState newState)
             {
                 prevState = readState;
                 readState = newState;
             }
+
+            TypeInstanceDescription cur_class = new TypeInstanceDescription();
+            List<AttributeInstanceDescription> cur_attributes = new List<AttributeInstanceDescription>();
+            List<TypeInstanceDescription> cur_members = new List<TypeInstanceDescription>();
+            TypeInstanceDescription.MemberDescription cur_member = new TypeInstanceDescription.MemberDescription();
 
             foreach (string token in tokens)
             {
@@ -75,6 +85,57 @@ namespace QuickScript
                 else if (token == "]")
                 {
                     Assertion.Assert(readState == ReadState.Attributes, "Should be reading attributes when we encounter closing brackets");
+
+                    if (cur_attributes.Count > 0)
+                    {
+                        if (prevState == ReadState.Class)
+                        {
+                            cur_class.Attributes = cur_attributes;
+                        }
+                        else
+                        {
+                            Assertion.Assert(prevState == ReadState.Member, "Should have been reading a member");
+                            cur_member.Attributes = cur_attributes;
+                        }
+
+                        cur_attributes = new List<AttributeInstanceDescription>();
+                    }
+
+                    ChangeReadState(prevState);
+
+                }
+                else if (token == "{")
+                {
+                    Assertion.Assert(readState == ReadState.Class);
+                    Assertion.Assert(unhandled_tokens.Count > 0, "Should already have at least one token as a class name!");
+                    cur_class.Name.Reset(unhandled_tokens.Pop());
+                    ChangeReadState(ReadState.Member);
+                }
+                else if (token == "}")
+                {
+                    Assertion.Assert(unhandled_tokens.Count == 0, "Should already have handled all tokens!");                    
+                    
+                    if (cur_members.Count > 0)
+                    {
+                        cur_class.Members = cur_members;
+                        cur_members = new List<TypeInstanceDescription>();
+                    }
+                    
+                    retVal.Add(cur_class);
+                    cur_class = new TypeInstanceDescription();
+                }
+                else if (token == ";")
+                {
+                    Assertion.Assert(readState == ReadState.Member, "Should only encounter ; when reading members");
+                    Assertion.Assert(unhandled_tokens.Count > 1, "Should have atleast the member type and name here");
+                    if (unhandled_tokens.Count > 2)
+                    {
+                        //type, name, val
+                        cur_member.Value = unhandled_tokens.Pop(); 
+                    }
+                    //type, name
+                    cur_member.TypeDescription.Name.Reset(unhandled_tokens.Pop());
+                    cur_member.Name.Reset(unhandled_tokens.Pop());
                 }
             }
 
