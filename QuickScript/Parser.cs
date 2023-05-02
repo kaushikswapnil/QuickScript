@@ -137,6 +137,17 @@ namespace QuickScript
                     cur_member.TypeDescription.Name.Reset(unhandled_tokens.Pop());
                     cur_member.Name.Reset(unhandled_tokens.Pop());
                 }
+                else 
+                {
+                    if (readState == ReadState.Attributes)
+                    {
+                        cur_attributes.Add(new AttributeInstanceDescription(token));
+                    }
+                    else
+                    {
+                        unhandled_tokens.Push(token);
+                    }
+                }
             }
 
             return new List<TypeInstanceDescription>();

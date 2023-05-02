@@ -29,7 +29,18 @@ namespace QuickScript
     public class AttributeInstanceDescription
     {
         public HashString Name { get; set; }
-        public List<string> Values { get; set;}
+        public List<string>? Values { get; set;}
+
+        public AttributeInstanceDescription(HashString name)
+        {
+            Name = name;
+            Values = null;
+        }
+        public AttributeInstanceDescription(HashString name, List<string> values)
+        {
+            Name = name;
+            Values = values;
+        }
     }
 
     public class TypeDefinition
