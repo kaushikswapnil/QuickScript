@@ -55,7 +55,8 @@ namespace QuickScript
         }
         public HashString Name { get; set; }
         public List<MemberDefinition>? Members { get; set; }
-        public string DefaultValue { get; set; }
+        public List<AttributeTag>? Attributes { get; set; }
+        public string? DefaultValue { get; set; }
     }
 
     public class TypeInstanceDescription
@@ -63,9 +64,7 @@ namespace QuickScript
         public HashString Name { get; set; } = new HashString();
         public List<AttributeInstanceDescription>? Attributes { get; set; }
         public string? Value { get; set; }
-
         public bool HasAttributes() { return Attributes != null && Attributes.Count > 0;}
-
         public class MemberDescription
         {
             public HashString Name { get; set; } = new HashString();
