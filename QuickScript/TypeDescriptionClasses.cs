@@ -18,6 +18,12 @@ namespace QuickScript
         {
             Name = name;
         }
+
+        public AttributeDefinition(HashString name, uint value_count)
+        {
+            Name = name;
+            MinValueCount = MaxValueCount = value_count;
+        }
     }
 
     public class AttributeTag
@@ -57,6 +63,12 @@ namespace QuickScript
         public List<MemberDefinition>? Members { get; set; }
         public List<AttributeTag>? Attributes { get; set; }
         public string? DefaultValue { get; set; }
+        public List<HashString>? Aliases { get; set; }
+
+        public TypeDefinition(in HashString name)
+        {
+            Name = name;
+        }
     }
 
     public class TypeInstanceDescription
