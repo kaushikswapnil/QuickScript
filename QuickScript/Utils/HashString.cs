@@ -93,6 +93,10 @@ namespace QuickScript.Utils
             return Str.Length > 0 || Hash != InvalidHashValue;
         }
 
+        private static string FormatStringForHash(in string str)
+        {
+            return str.ToLower();
+        }
         private static bool ReverseStringExists(in HashValueType hash)
         {
             return HashedStringDictionary.ContainsKey(hash);
@@ -121,11 +125,12 @@ namespace QuickScript.Utils
         {
             using (var hasher = System.Security.Cryptography.MD5.Create())
             {
-                var hashed = hasher.ComputeHash(System.Text.Encoding.ASCII.GetBytes(str));
+                string to_hash = FormatStringForHash(str);
+                var hashed = hasher.ComputeHash(System.Text.Encoding.ASCII.GetBytes(to_hash));
                 var ivalue = BitConverter.ToUInt32(hashed, 0);
                 var ret_val = new HashValueType(ivalue);
 
-                VerifyUniqueHash(str, ret_val);
+                VerifyUniqueHash(to_hash, ret_val);
 
                 return ret_val;
             }
