@@ -93,6 +93,11 @@ namespace QuickScript.Utils
             return Str.Length > 0 || Hash != InvalidHashValue;
         }
 
+        static public HashString FromString(in string str)
+        {
+            return new HashString(str);
+        }
+
         private static string FormatStringForHash(in string str)
         {
             return str.ToLower();
@@ -139,6 +144,11 @@ namespace QuickScript.Utils
         public string AsString()
         {
             return Str;
+        }
+
+        public uint AsHash()
+        {
+            return Hash;
         }
     }
 }

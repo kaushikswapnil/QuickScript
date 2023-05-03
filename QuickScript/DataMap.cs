@@ -71,7 +71,7 @@ namespace QuickScript
 
         public void SaveToDisk(in string output_file_path)
         {
-            string jsonString = JsonSerializer.Serialize<DataMap>(this);
+            string jsonString = JsonSerializer.Serialize<DataMap>(this, GetSerializationOptions());
             File.WriteAllText(output_file_path, jsonString);
         }
 

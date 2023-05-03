@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
+using QuickScript.Utils;
+using System.Globalization;
+using System.Text.Json.Nodes;
 
 namespace QuickScript
 {
+    public class ExportSettings
+    {
+
+    }
+
     public interface IExporter
     {
-        public void Export(in List<TypeInstanceDescription> type_desc_list);
+        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list);
     }
 
     public class ConsoleExporter : IExporter
@@ -66,7 +76,69 @@ namespace QuickScript
             return retval;
         }
 
-        public void Export(in List<TypeInstanceDescription> type_desc_list)
+        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
+        {
+            string export_val = "";
+
+            foreach (TypeInstanceDescription type_desc in type_desc_list)
+            {
+                export_val += Export(type_desc) + "\n";
+            }
+
+            Console.WriteLine(export_val);
+        }
+    }
+
+    public class JSonExporter : IExporter
+    {
+        private static JsonSerializerOptions GetSerializationOptions()
+        {
+            JsonSerializerOptions options = new()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true
+            };
+
+            return options;
+        }
+
+        public class HashStringConverter : JsonConverter<HashString>
+        {
+            public override HashString Read(ref Utf8JsonReader reader,
+                                            Type type,
+                                            JsonSerializerOptions options)
+            {
+                var str = reader.GetString();
+                Console.WriteLine("Reader value " + str);
+                return new HashString(str);
+            }
+
+            public override void Write(
+                Utf8JsonWriter writer,
+                HashString hashstring,
+                JsonSerializerOptions options)
+            {
+                writer.WriteString("Str", hashstring.AsString());
+            }
+        }
+
+        private string Export(in List<AttributeInstanceDescription> attributes)
+        {
+            string retval = "";
+            foreach (AttributeInstanceDescription attr_desc in attributes)
+            {
+                retval += JsonSerializer.Serialize<AttributeInstanceDescription>(attr_desc, GetSerializationOptions());
+            }
+
+            return retval;
+        }
+
+        private string Export(in TypeInstanceDescription type_desc)
+        {
+            string retval = JsonSerializer.Serialize<HashString>(type_desc.Name, GetSerializationOptions());
+            return retval;
+        }
+        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
         {
             string export_val = "";
 
