@@ -11,12 +11,8 @@ namespace QuickScript
         static public void Main(string[] args)
         {
             Exporter exporter = new Exporter();
-            Console.WriteLine(exporter.Export(Parser.Parse("[whatever, hello]" +
-                "\nNewPuru\n" +
-                "{\n" +
-                "[kya]\n" +
-                "int new_mem = 10;\n" +
-                "}")));
+            QuickscriptSettings settings = new QuickscriptSettings(); 
+            Console.WriteLine(exporter.Export(Parser.ParseDirectory(settings.QuickScriptsDirectory)));
 
         }
     }

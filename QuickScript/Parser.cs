@@ -9,10 +9,49 @@ namespace QuickScript
 {
     public class Parser
     {
-        public static List<TypeInstanceDescription> Parse(in string descLines)
+        public static List<TypeInstanceDescription> ParseDirectory(in string directory_name, in bool parse_sub_directories = true)
+        {
+            Assertion.Assert(Directory.Exists(directory_name), "Directory to parse does not exist!");
+
+            List<TypeInstanceDescription> retval = new List<TypeInstanceDescription>();
+
+            var file_names = Directory.EnumerateFiles(directory_name,"*.qs",
+                                                        parse_sub_directories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            foreach (string file_name in file_names)
+            {
+                var parsed_type_instance_descs = ParseLines(File.ReadAllText(file_name));
+                foreach (TypeInstanceDescription type_instance_desc in parsed_type_instance_descs)
+                {
+                    if (type_instance_desc.HasAttributes() == false)
+                    {
+                        type_instance_desc.Attributes = new List<AttributeInstanceDescription>();
+                    }
+                    AttributeInstanceDescription file_path_attr = new AttributeInstanceDescription(new HashString("FilePath"));
+                    file_path_attr.Values = new List<string>();
+                    file_path_attr.Values.Add(file_name);
+                    type_instance_desc.Attributes.Add(file_path_attr);
+                }
+
+                retval.AddRange(parsed_type_instance_descs);
+            }
+
+            return retval;
+        }
+
+        private static List<TypeInstanceDescription> ParseLines(in string descLines)
         {
             List<string> tokens = new List<string>();
             string curWord = "";
+            bool reading_comment = false;
+
+            void TryAddProperWordToTokens()
+            {
+                if (curWord.Length > 0)
+                {
+                    tokens.Add(curWord);
+                    curWord = "";
+                }
+            }
 
             foreach (char c in descLines) 
             {
@@ -22,10 +61,9 @@ namespace QuickScript
                     case '\n':
                     case '\t':
                     case ',':
-                        if (curWord.Length > 0)
+                        if (!reading_comment)
                         {
-                            tokens.Add(curWord);
-                            curWord = "";
+                            TryAddProperWordToTokens();
                         }
                         break;
                     case ';':
@@ -33,30 +71,32 @@ namespace QuickScript
                     case '}':
                     case '[':
                     case ']':
-                        if (curWord.Length > 0)
+                        if (!reading_comment)
                         {
-                            tokens.Add(curWord);
-                            curWord = "";
+                            TryAddProperWordToTokens();
+                            tokens.Add(Char.ToString(c));
                         }
-                        tokens.Add(Char.ToString(c));
+                        break;
+                    case '*':
+                        reading_comment = !reading_comment;
                         break;
                     case '=':
                         break; //we ignore the equal symbol
                     default:
-                        curWord += c;
+                        if (!reading_comment)
+                        {
+                            curWord += c;
+                        }
                         break;
                 }
             }
 
-            if (curWord.Length > 0)
-            {
-                tokens.Add(curWord);
-            }
+            TryAddProperWordToTokens();
 
             return ExtractTypes(tokens);
         }
 
-        static public List<TypeInstanceDescription> ExtractTypes(in List<string> tokens)
+        private static List<TypeInstanceDescription> ExtractTypes(in List<string> tokens)
         {
             ReadState prevState = ReadState.None;
             ReadState readState = ReadState.Class;
@@ -114,8 +154,6 @@ namespace QuickScript
                 }
                 else if (token == "}")
                 {
-                    Assertion.Assert(unhandled_tokens.Count == 0, "Should already have handled all tokens!");                    
-                    
                     if (cur_members.Count > 0)
                     {
                         cur_class.Members = cur_members;
@@ -124,6 +162,7 @@ namespace QuickScript
                     
                     retVal.Add(cur_class);
                     cur_class = new TypeInstanceDescription();
+                    ChangeReadState(ReadState.Class);
                 }
                 else if (token == ";")
                 {
