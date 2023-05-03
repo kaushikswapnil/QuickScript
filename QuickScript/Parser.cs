@@ -59,6 +59,7 @@ namespace QuickScript
                 {
                     case ' ':
                     case '\n':
+                    case '\r':
                     case '\t':
                     case ',':
                         if (!reading_comment)
@@ -192,6 +193,8 @@ namespace QuickScript
                     }
                 }
             }
+
+            Assertion.Assert(unhandled_tokens.Count == 0, "Should have handled all tokens by now");
 
             return retVal;
         }
