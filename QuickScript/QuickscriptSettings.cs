@@ -10,5 +10,6 @@ namespace QuickScript
     {
         public string QuickScriptsDirectory = "D:\\PersonalProjects\\QuickScript\\Tests\\Input";
         public string OutputDirectory = "D:\\PersonalProjects\\QuickScript\\Tests\\Output";
+        public string DataMapPath = "D:\\PersonalProjects\\QuickScript\\Tests\\QSDataMap.qsdm";
     }
 }

@@ -10,9 +10,11 @@ namespace QuickScript.Utils
 {
     public class Assertion
     {
-        static public void Warn(string message)
+        static public void Warn(string message,
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            Logging.Log("[Warning]" + message, "", 0);
+            Logging.Log("[Warning]" + filePath + ":" + lineNumber + "]" + message, "", 0);
         }
 
         static public void Assert<T>(bool condition, string message = "",

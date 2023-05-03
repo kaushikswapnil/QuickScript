@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace QuickScript
 {
-    public class Exporter
+    public interface IExporter
     {
-        public virtual string Export(in List<AttributeInstanceDescription> attributes)
+        public void Export(in List<TypeInstanceDescription> type_desc_list);
+    }
+
+    public class ConsoleExporter : IExporter
+    {
+        private string Export(in List<AttributeInstanceDescription> attributes)
         {
             string retval = "";
 
@@ -32,7 +37,7 @@ namespace QuickScript
             return retval;
         }
 
-        public virtual string Export(in TypeInstanceDescription type_desc)
+        private string Export(in TypeInstanceDescription type_desc)
         {
             string retval = "";
 
@@ -61,16 +66,16 @@ namespace QuickScript
             return retval;
         }
 
-        public virtual string Export(in List<TypeInstanceDescription> type_desc_list)
+        public void Export(in List<TypeInstanceDescription> type_desc_list)
         {
-            string retval = "";
+            string export_val = "";
 
             foreach (TypeInstanceDescription type_desc in type_desc_list)
             {
-                retval += Export(type_desc) + "\n";
+                export_val += Export(type_desc) + "\n";
             }
 
-            return retval;
+            Console.WriteLine(export_val);
         }
     }
 }

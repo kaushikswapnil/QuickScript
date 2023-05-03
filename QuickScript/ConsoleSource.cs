@@ -10,9 +10,13 @@ namespace QuickScript
     {
         static public void Main(string[] args)
         {
-            Exporter exporter = new Exporter();
-            QuickscriptSettings settings = new QuickscriptSettings(); 
-            Console.WriteLine(exporter.Export(Parser.ParseDirectory(settings.QuickScriptsDirectory)));
+            QuickscriptSettings settings = new QuickscriptSettings();
+
+            IExporter exporter = new ConsoleExporter();
+            DataMap dm = DataMap.ConstructDataMap(settings.DataMapPath);
+            dm.SaveToDisk(settings.DataMapPath);            
+
+            exporter.Export(Parser.ParseDirectory(settings.QuickScriptsDirectory));
 
         }
     }
