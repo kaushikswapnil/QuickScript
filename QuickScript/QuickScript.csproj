@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
+    <StartupObject>QuickScript.ConsoleSource</StartupObject>
   </PropertyGroup>
 
 </Project>
