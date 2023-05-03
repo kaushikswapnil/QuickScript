@@ -32,5 +32,19 @@ namespace QuickScript.Utils
         {
             Assert<Exception>(condition, message, filePath, lineNumber);
         }
+
+        static public void SoftAssert(bool condition, string message = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
+        {
+            try
+            {
+                Assert(condition, message, filePath, lineNumber);
+            }
+            catch (Exception e) 
+            { 
+                //do nothing
+            }
+        }
     }
 }

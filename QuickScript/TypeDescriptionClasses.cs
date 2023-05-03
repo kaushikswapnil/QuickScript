@@ -60,16 +60,24 @@ namespace QuickScript
 
     public class TypeInstanceDescription
     {
-        public HashString Name { get; set;}
-        public List<AttributeInstanceDescription> Attributes { get; set; }
-        public string Value { get; set; }
+        public HashString Name { get; set; } = new HashString();
+        public List<AttributeInstanceDescription>? Attributes { get; set; }
+        public string? Value { get; set; }
+
+        public bool HasAttributes() { return Attributes != null && Attributes.Count > 0;}
 
         public class MemberDescription
         {
-            HashString Name { get; set; }
-            string Value { get; set; }
-            TypeInstanceDescription TypeDescription { get; set; }
+            public HashString Name { get; set; } = new HashString();
+            public string? Value { get; set; }
+            public TypeInstanceDescription TypeDescription { get; set; } = new TypeInstanceDescription();
+            public List<AttributeInstanceDescription>? Attributes { get; set; }
+
+            public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
+            public bool HasValue() { return Value != null; }
         }
-        public List<MemberDescription> Members { get; set; }
+        public List<MemberDescription>? Members { get; set; }
+
+        public bool HasMembers() { return Members != null && Members.Count > 0;}
     }
 }

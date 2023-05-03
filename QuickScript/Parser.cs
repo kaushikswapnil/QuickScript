@@ -21,6 +21,7 @@ namespace QuickScript
                     case ' ':
                     case '\n':
                     case '\t':
+                    case ',':
                         if (curWord.Length > 0)
                         {
                             tokens.Add(curWord);
@@ -45,11 +46,11 @@ namespace QuickScript
                         curWord += c;
                         break;
                 }
+            }
 
-                if (curWord.Length > 0)
-                {
-                    tokens.Add(curWord);
-                }
+            if (curWord.Length > 0)
+            {
+                tokens.Add(curWord);
             }
 
             return ExtractTypes(tokens);
@@ -72,7 +73,7 @@ namespace QuickScript
 
             TypeInstanceDescription cur_class = new TypeInstanceDescription();
             List<AttributeInstanceDescription> cur_attributes = new List<AttributeInstanceDescription>();
-            List<TypeInstanceDescription> cur_members = new List<TypeInstanceDescription>();
+            List<TypeInstanceDescription.MemberDescription> cur_members = new List<TypeInstanceDescription.MemberDescription>();
             TypeInstanceDescription.MemberDescription cur_member = new TypeInstanceDescription.MemberDescription();
 
             foreach (string token in tokens)
@@ -118,7 +119,7 @@ namespace QuickScript
                     if (cur_members.Count > 0)
                     {
                         cur_class.Members = cur_members;
-                        cur_members = new List<TypeInstanceDescription>();
+                        cur_members = new List<TypeInstanceDescription.MemberDescription>();
                     }
                     
                     retVal.Add(cur_class);
@@ -134,14 +135,17 @@ namespace QuickScript
                         cur_member.Value = unhandled_tokens.Pop(); 
                     }
                     //type, name
-                    cur_member.TypeDescription.Name.Reset(unhandled_tokens.Pop());
                     cur_member.Name.Reset(unhandled_tokens.Pop());
+                    cur_member.TypeDescription.Name.Reset(unhandled_tokens.Pop());
+
+                    cur_members.Add(cur_member);
+                    cur_member = new TypeInstanceDescription.MemberDescription();
                 }
                 else 
                 {
                     if (readState == ReadState.Attributes)
                     {
-                        cur_attributes.Add(new AttributeInstanceDescription(token));
+                        cur_attributes.Add(new AttributeInstanceDescription(new HashString(token)));
                     }
                     else
                     {
@@ -150,7 +154,7 @@ namespace QuickScript
                 }
             }
 
-            return new List<TypeInstanceDescription>();
+            return retVal;
         }
         private enum ReadState
         {

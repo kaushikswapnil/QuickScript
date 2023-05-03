@@ -117,5 +117,10 @@ namespace QuickScript.Utils
                 return ret_val;
             }
         }
+
+        public string AsString()
+        {
+            return Str;
+        }
     }
 }

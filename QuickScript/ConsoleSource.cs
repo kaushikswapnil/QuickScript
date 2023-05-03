@@ -10,7 +10,14 @@ namespace QuickScript
     {
         static public void Main(string[] args)
         {
-            Parser.Parse("[whatever, hello]\nclass NewPuru\n{\n[kya]\nint new_mem = 10;\n}\n");
+            Exporter exporter = new Exporter();
+            Console.WriteLine(exporter.Export(Parser.Parse("[whatever, hello]" +
+                "\nNewPuru\n" +
+                "{\n" +
+                "[kya]\n" +
+                "int new_mem = 10;\n" +
+                "}")));
+
         }
     }
 }
