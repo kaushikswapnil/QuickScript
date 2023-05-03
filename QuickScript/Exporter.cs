@@ -15,7 +15,17 @@ namespace QuickScript
             retval += "[";
             foreach (AttributeInstanceDescription attr_desc in attributes)
             {
-                retval += attr_desc.Name.AsString() + ", ";
+                retval += attr_desc.Name.AsString();
+                if (attr_desc.Values != null)
+                {
+                    retval += "(";
+                    foreach (var attr_desc_val in attr_desc.Values)
+                    {
+                        retval += attr_desc_val + ", ";
+                    }
+                    retval += ")";
+                }
+                retval += ", ";
             }
             retval += "]";
 
@@ -64,3 +74,4 @@ namespace QuickScript
         }
     }
 }
+
