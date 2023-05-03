@@ -56,6 +56,13 @@ namespace QuickScript.Utils
             this.Hash = GenerateHash(str);
         }
 
+        public HashString(in HashValueType hash)
+        {
+            Assertion.SoftAssert(ReverseStringExists(hash), "In order to use this, we must have a string to lookup");
+            Hash = hash;
+            Str = GetStringFromHash(hash);
+        }
+
         public HashString(in string str, in HashValueType hash)
         {
             Str = str;
@@ -71,6 +78,7 @@ namespace QuickScript.Utils
 
         public void Reset(in HashValueType hash)
         {
+            Assertion.SoftAssert(ReverseStringExists(hash), "In order to use this, we must have a string to lookup");
             Hash = hash;
             Str = GetStringFromHash(hash);
         }
@@ -85,9 +93,14 @@ namespace QuickScript.Utils
             return Str.Length > 0 || Hash != InvalidHashValue;
         }
 
-        private string GetStringFromHash(in HashValueType hash)
+        private static bool ReverseStringExists(in HashValueType hash)
         {
-            if (HashedStringDictionary.ContainsKey(hash) == false)
+            return HashedStringDictionary.ContainsKey(hash);
+        }
+
+        private static string GetStringFromHash(in HashValueType hash)
+        {
+            if (ReverseStringExists(hash) == false)
             {
                 return "Not Found";
             }
@@ -96,7 +109,7 @@ namespace QuickScript.Utils
         }
         public static bool VerifyUniqueHash(in string str, in HashValueType hash)
         {
-            if (HashedStringDictionary.ContainsKey(hash))
+            if (ReverseStringExists(hash))
             {
                 return str == HashedStringDictionary[hash];
             }
