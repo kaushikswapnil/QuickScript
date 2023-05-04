@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using QuickScript.Utils;
 using System.Globalization;
 using System.Text.Json.Nodes;
+using System.Reflection.Metadata;
 
 namespace QuickScript
 {
@@ -19,6 +20,7 @@ namespace QuickScript
     public interface IExporter
     {
         public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list);
+        public void Export(in ExportSettings settings, in DataMap dm);
     }
 
     public class ConsoleExporter : IExporter
@@ -28,20 +30,34 @@ namespace QuickScript
             string retval = "";
 
             retval += "[";
-            foreach (AttributeInstanceDescription attr_desc in attributes)
+
+            void AddAttrDesc(AttributeInstanceDescription attr)
             {
-                retval += attr_desc.Name.AsString();
-                if (attr_desc.Values != null)
+                retval += attr.Name.AsString();
+                if (attr.Values != null && attr.Values.Count > 0)
                 {
                     retval += "(";
-                    foreach (var attr_desc_val in attr_desc.Values)
+                    var attr_val = attr.Values[0];
+                    for (int i = 1; i < attr.Values.Count; i++)
                     {
-                        retval += attr_desc_val + ", ";
+                        attr_val = attr.Values[i];
+                        retval += ", " + attr_val;
                     }
+
                     retval += ")";
                 }
-                retval += ", ";
             }
+
+            if (attributes.Count > 0)
+            {
+                AddAttrDesc(attributes[0]);
+                for (int i = 1; i < attributes.Count; ++i)
+                {
+                    retval += ", ";
+                    AddAttrDesc(attributes[i]);
+                }
+            }
+
             retval += "]";
 
             return retval;
@@ -84,6 +100,93 @@ namespace QuickScript
             {
                 export_val += Export(type_desc) + "\n";
             }
+
+            Console.WriteLine(export_val);
+        }
+
+        private string Export(in List<AttributeDefinition> attr_list)
+        {
+            string retval = "-----Attribute List-----\n\n";
+
+            foreach (AttributeDefinition attribute in attr_list)
+            {
+                retval += "{";
+                retval += "\nName : " + attribute.Name.AsString();
+                retval += "\nValue count : " + attribute.MinValueCount.ToString() + ", " + attribute.MaxValueCount.ToString();
+                retval += "\n}\n";
+            }
+
+            return retval;
+        }
+
+        private string Export(in List<AttributeTag> attributeTags)
+        {
+            string retval = "[";
+
+            for (int attr_i = 0; attr_i < attributeTags.Count; ++attr_i)
+            {
+                var attr_tag = attributeTags[attr_i];
+                retval += attr_i > 0 ? ", " : "";
+                retval += attr_tag.Attribute.Name.ToString();
+                if (attr_tag.HasValues())
+                {
+                    retval += "(";
+                    for (int val_i = 0; val_i < attr_tag.Values.Count; ++val_i)
+                    {
+                        var val = attr_tag.Values[val_i];
+                        retval += val_i > 0 ? ", " : "";
+                        retval += val;
+                    }
+                    retval += ")";
+                }
+            }
+
+            retval += "]";
+
+            return retval;
+        }
+
+        private string Export(in List<TypeDefinition> typeDefinitions)
+        {
+            string retval = "-----Type Definitions-----\n";
+
+            foreach (TypeDefinition typeDefinition in typeDefinitions)
+            {
+                if (typeDefinition.HasAttributes())
+                {
+                    retval += "\n" + Export(typeDefinition.Attributes);
+                }
+                retval += "\nName : " + typeDefinition.Name.AsString();
+                retval += "\n{";
+                
+                if (typeDefinition.HasMembers())
+                {
+                    foreach (TypeDefinition.MemberDefinition member in typeDefinition.Members)
+                    {
+                        if (member.HasAttributes())
+                        {
+                            retval += "\n" + Export(member.Attributes);
+                        }
+                        retval += "\n" + member.Type.Name.ToString() + " " + member.Name.ToString();
+                        if (member.HasValue())
+                        {
+                            retval += " = " + member.Value;
+                        }
+                        retval+= ";";
+                    }
+                }
+
+                retval += "\n}\n";
+            }
+
+            return retval;
+        }
+
+        public void Export(in ExportSettings settings, in DataMap dm)
+        {
+            string export_val = "";
+            export_val += Export(dm.AttributeDefinitions);
+            export_val += Export(dm.TypeDefinitions);
 
             Console.WriteLine(export_val);
         }
@@ -162,6 +265,12 @@ namespace QuickScript
                 export_val += Export(type_desc) + "\n";
             }
 
+            Console.WriteLine(export_val);
+        }
+
+        public void Export(in ExportSettings settings, in DataMap dm)
+        {
+            string export_val = JsonSerializer.Serialize<DataMap>(dm, GetSerializationOptions());
             Console.WriteLine(export_val);
         }
     }

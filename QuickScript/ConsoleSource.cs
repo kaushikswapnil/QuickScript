@@ -25,7 +25,7 @@ namespace QuickScript
             DataMap dm = DataMap.ConstructDataMap(settings.DataMapPath);
             dm.SaveToDisk(settings.DataMapPath);
 
-            exporter.Export(new ExportSettings(), Parser.ParseDirectory(settings.QuickScriptsDirectory));
+            exporter.Export(new ExportSettings(), dm);
         }
     }
 }

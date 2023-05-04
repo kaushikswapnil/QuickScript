@@ -30,6 +30,7 @@ namespace QuickScript
     {
         public AttributeDefinition Attribute { get; set; }
         public List<string>? Values { get; set; }
+        public bool HasValues() { return Values != null && Values.Count > 0;}
     }
 
     public class AttributeInstanceDescription
@@ -56,16 +57,20 @@ namespace QuickScript
             public HashString Name { get; set;} = new HashString();
             public List<AttributeTag> Attributes { get; set; } = new List<AttributeTag>();
             public TypeDefinition Type { get; set; }
-            public string DefaultValue { get; set; } = "";
+            public string Value { get; set; } = "";
+            public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
+            public bool HasValue() { return Value != null; }
 
         }
         public HashString Name { get; set; }
         public List<MemberDefinition>? Members { get; set; }
+        public bool HasMembers() { return Members != null && Members.Count > 0; }
         public List<AttributeTag>? Attributes { get; set; }
+        public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
         public string? DefaultValue { get; set; }
         public List<HashString>? Aliases { get; set; }
 
-        public TypeDefinition(in HashString name)
+        public TypeDefinition(HashString name)
         {
             Name = name;
         }

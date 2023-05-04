@@ -50,39 +50,39 @@ namespace QuickScript.Utils
             this.Hash = InvalidHashValue;
         }
 
-        public HashString(in string str)
+        public HashString(string str)
         {
             this.Str = str;
             this.Hash = GenerateHash(str);
         }
 
-        public HashString(in HashValueType hash)
+        public HashString(HashValueType hash)
         {
             Assertion.SoftAssert(ReverseStringExists(hash), "In order to use this, we must have a string to lookup");
             Hash = hash;
             Str = GetStringFromHash(hash);
         }
 
-        public HashString(in string str, in HashValueType hash)
+        public HashString(string str, HashValueType hash)
         {
             Str = str;
             Hash = hash;
             VerifyUniqueHash(str, hash);
         }
 
-        public void Reset(in string str)
+        public void Reset(string str)
         {
             Hash = GenerateHash(str);
             Str = str;
         }
 
-        public void Reset(in HashValueType hash)
+        public void Reset(HashValueType hash)
         {
             Assertion.SoftAssert(ReverseStringExists(hash), "In order to use this, we must have a string to lookup");
             Hash = hash;
             Str = GetStringFromHash(hash);
         }
-        public void Reset(in string str, in HashValueType hash)
+        public void Reset(string str, HashValueType hash)
         {
             Str = str; Hash = hash;
             VerifyUniqueHash(str, hash);
@@ -93,21 +93,21 @@ namespace QuickScript.Utils
             return Str.Length > 0 || Hash != InvalidHashValue;
         }
 
-        static public HashString FromString(in string str)
+        static public HashString FromString(string str)
         {
             return new HashString(str);
         }
 
-        private static string FormatStringForHash(in string str)
+        private static string FormatStringForHash(string str)
         {
             return str.ToLower();
         }
-        private static bool ReverseStringExists(in HashValueType hash)
+        private static bool ReverseStringExists(HashValueType hash)
         {
             return HashedStringDictionary.ContainsKey(hash);
         }
 
-        private static string GetStringFromHash(in HashValueType hash)
+        private static string GetStringFromHash(HashValueType hash)
         {
             if (ReverseStringExists(hash) == false)
             {
@@ -116,7 +116,7 @@ namespace QuickScript.Utils
 
             return HashedStringDictionary[hash];
         }
-        public static bool VerifyUniqueHash(in string str, in HashValueType hash)
+        public static bool VerifyUniqueHash(string str, HashValueType hash)
         {
             if (ReverseStringExists(hash))
             {
@@ -126,7 +126,7 @@ namespace QuickScript.Utils
             HashedStringDictionary[hash] = str;
             return true;
         }
-        public static HashValueType GenerateHash(in string str)
+        public static HashValueType GenerateHash(string str)
         {
             using (var hasher = System.Security.Cryptography.MD5.Create())
             {
@@ -140,7 +140,10 @@ namespace QuickScript.Utils
                 return ret_val;
             }
         }
-
+        public override string? ToString()
+        {
+            return AsString();
+        }
         public string AsString()
         {
             return Str;
