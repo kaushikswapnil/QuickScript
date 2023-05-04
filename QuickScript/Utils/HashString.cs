@@ -27,6 +27,21 @@ namespace QuickScript.Utils
 
             public static implicit operator uint(HashValueType hash) => hash.Val;
             public static explicit operator HashValueType(uint val) => new HashValueType(val);
+
+            public static bool operator ==(HashValueType x, HashValueType y)
+            {
+                return x.Val == y.Val;
+            }
+            public static bool operator !=(HashValueType x, HashValueType y)
+            {
+                return x.Val != y.Val;
+            }
+            public override bool Equals(object o)
+            {
+                if (!(o is HashValueType))
+                    return false;
+                return this == (HashValueType)o;
+            }
         }
 
         private string Str { get; set; }

@@ -24,9 +24,10 @@ namespace QuickScript
 
             IExporter exporter = new JSonExporter();
             DataMap dm = DataMap.ConstructDataMap(settings.DataMapPath);
+            dm.AssimilateTypeInstanceDescriptions(Parser.ParseDirectory(settings.QuickScriptsDirectory));
             dm.SaveToDisk(settings.DataMapPath);
 
-            exporter.Export(new ExportSettings(), dm);
+            exporter.Export(new ExportSettings(), Parser.ParseDirectory(settings.QuickScriptsDirectory));
         }
     }
 }

@@ -82,7 +82,7 @@ namespace QuickScript
             {
                 //Alias
                 AttributeDefinition alias = new AttributeDefinition(new HashString("Alias"), 1, -1, new HashString("string"));
-                AttributeDefinitions.Add(file_path);
+                AttributeDefinitions.Add(alias);
             }
         }
 
@@ -189,7 +189,7 @@ namespace QuickScript
             return null;
         }
 
-        private TypeDefinition? ParseTypeDescriptionToDefinition(in TypeInstanceDescription type_desc)
+        private TypeDefinition? ParseTypeDescriptionToDefinition(in TypeInstanceDescription description)
         {
             TypeDefinition new_def = new TypeDefinition(description.Name);
             List<AttributeTag> attr_tags = null;
@@ -238,6 +238,8 @@ namespace QuickScript
                                         mem_attr_tags.Add(new_attr);
                                     }
                                 }
+
+                                new_member.Attributes = mem_attr_tags;
                             }
 
                             members.Add(new_member);
@@ -264,13 +266,13 @@ namespace QuickScript
         {
             List<TypeDefinition> processed_defs = new List<TypeDefinition>();
 
-            foreach (TypeInstanceDescriptiomn description in typeInstanceDescriptions)
+            foreach (TypeInstanceDescription description in typeInstanceDescriptions)
             {
                 TypeDefinition? new_def = ParseTypeDescriptionToDefinition(description);
 
                 if (new_def != null)
                 {
-                    TypeDefinition? existing_def = GetAttributeDefinitionByName(description.Name);
+                    TypeDefinition? existing_def = GetTypeDefinitionByName(description.Name);
 
                     if (existing_def != null)
                     {
@@ -284,6 +286,8 @@ namespace QuickScript
                     }
                 }
             }
+
+            TypeDefinitions.AddRange(processed_defs);
         }
     }
 }

@@ -48,15 +48,15 @@ namespace QuickScript
         public List<ValueType>? Values { get; set; }
         public bool HasValues() { return Values != null && Values.Count > 0;}
 
-        public AttributeTag(ref AttributeDefinition attr_def)
+        public AttributeTag(AttributeDefinition attr_def)
         {
             Attribute = attr_def;
             Values = null;
         }
-        public AttributeTag(ref AttributeDefinition attr_def)
+        public AttributeTag(AttributeDefinition attr_def, in List<ValueType> values)
         {
             Attribute = attr_def;
-            Values = null;
+            Values = values;
         }
     }
 
@@ -86,7 +86,7 @@ namespace QuickScript
             public HashString Name { get; set;} = new HashString();
             public List<AttributeTag> Attributes { get; set; } = new List<AttributeTag>();
             public TypeDefinition Type { get; set; }
-            public ValueType Value { get; set; } = "";
+            public ValueType? Value { get; set; }
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
             public bool HasValue() { return Value != null; }
 

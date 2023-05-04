@@ -27,8 +27,8 @@ namespace QuickScript
                         type_instance_desc.Attributes = new List<AttributeInstanceDescription>();
                     }
                     AttributeInstanceDescription file_path_attr = new AttributeInstanceDescription(new HashString("FilePath"));
-                    file_path_attr.Values = new List<string>();
-                    file_path_attr.Values.Add(file_name);
+                    file_path_attr.Values = new List<ValueType>();
+                    file_path_attr.Values.Add(new ValueType(file_name));
                     type_instance_desc.Attributes.Add(file_path_attr);
                 }
 
@@ -172,7 +172,7 @@ namespace QuickScript
                     if (unhandled_tokens.Count > 2)
                     {
                         //type, name, val
-                        cur_member.Value = unhandled_tokens.Pop(); 
+                        cur_member.Value = new ValueType(unhandled_tokens.Pop()); 
                     }
                     //type, name
                     cur_member.Name.Reset(unhandled_tokens.Pop());
