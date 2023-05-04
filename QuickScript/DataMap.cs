@@ -218,9 +218,11 @@ namespace QuickScript
                     {
                         if (members.Find(x => x.Name == member_desc.Name) == null)
                         {
-                            TypeDefinition.MemberDefinition new_member = new TypeDefinition.MemberDefinition();
-                            new_member.Name = member_desc.Name;
-                            new_member.Type = member_type;
+                            TypeDefinition.MemberDefinition new_member = new TypeDefinition.MemberDefinition
+                            {
+                                Name = member_desc.Name,
+                                Type = member_type
+                            };
 
                             if (member_desc.HasValue())
                             {
