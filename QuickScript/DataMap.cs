@@ -75,8 +75,14 @@ namespace QuickScript
         {
             {
                 //Filepath
-                AttributeDefinition file_path = new AttributeDefinition(new HashString("FilePath"), 1, 1);
+                AttributeDefinition file_path = new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string"));
                 AttributeDefinitions.Add(file_path); 
+            }
+
+            {
+                //Alias
+                AttributeDefinition alias = new AttributeDefinition(new HashString("Alias"), 1, -1, new HashString("string"));
+                AttributeDefinitions.Add(file_path);
             }
         }
 
@@ -133,10 +139,74 @@ namespace QuickScript
             return GetAttributeDefinitionByName(name) != null;
         }
 
+        private TypeDefinition? ProcessTypeInstanceDescription(TypeInstanceDescription description)
+        {
+            return null;
+            //
+            //public class InvalidAttributeDescription : Exception
+            //{
+            //    public InvalidAttributeDescription()
+            //    {
+            //    }
+
+            //    public InvalidAttributeDescription(string message)
+            //        : base(message)
+            //    {
+            //    }
+
+            //    public InvalidAttributeDescription(string message, Exception inner)
+            //        : base(message, inner)
+            //    {
+            //    }
+            //}
+        }
+
         public void AssimilateTypeInstanceDescriptions(in List<TypeInstanceDescription> typeInstanceDescriptions)
         {
-            foreach (TypeInstanceDescription description in typeInstanceDescriptions)
+            List<TypeDefinition> processed_defs = new List<TypeDefinition>();
+
+            foreach (TypeInstanceDescriptiomn description in typeInstanceDescriptions)
             {
+                TypeDefinition? existing_def = GetAttributeDefinitionByName(description.Name);
+                if (existing_def != null)
+                {
+                    //we have a type with this name already
+                    //check for any changes
+                    TypeDefinition new_def = new TypeDefinition(description.Name);
+                    List<AttributeTag> attr_tags = null;
+
+                    if (description.HasAttributes())
+                    {
+                        //first try to create attribute tags for each attr inst
+                        attr_tags = new List<AttributeTag>();
+                        foreach (AttributeInstanceDescription attr_desc in description.Attributes)
+                        {
+                            AttributeDefinition? attr_def = GetAttributeDefinitionByName(attr_desc.Name);
+                            if (attr_def != null)
+                            {
+                                List<ValueType> attr_values = null;
+                                if (attr_desc.HasValues())
+                                {
+                                    if (attr_desc.Values.Count >= attr_def.MinValueCount && attr_desc.Values.Count <= attr_def.MaxValueCount)
+                                    {
+                                        attr_values = attr_desc.Values;
+                                    }
+                                    else
+                                    {
+                                        //throw InvalidAttributeDescription
+                                    }
+                                }
+
+                                attr_tags.Add(new AttributeTag(attr_def, attr_values));
+                            }
+                            else
+                            {
+                                //throw InvalidAttributeDescription
+                            }
+                        }
+                    }
+                    
+                }
             }
         }
     }
