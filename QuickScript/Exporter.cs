@@ -96,8 +96,10 @@ namespace QuickScript
             JsonSerializerOptions options = new()
             {
                 ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true
+                WriteIndented = true,
+                IncludeFields = true,
             };
+            options.Converters.Add(new HashStringConverter());
 
             return options;
         }
@@ -108,8 +110,19 @@ namespace QuickScript
                                             Type type,
                                             JsonSerializerOptions options)
             {
-                var str = reader.GetString();
-                Console.WriteLine("Reader value " + str);
+                string str = "";
+                while (reader.Read())
+                {
+                    switch (reader.TokenType)
+                    {
+                        case JsonTokenType.String:
+                            str = reader.GetString();
+                            break;
+                        default:
+                            break;
+                                
+                    }
+                }
                 return new HashString(str);
             }
 
@@ -118,7 +131,9 @@ namespace QuickScript
                 HashString hashstring,
                 JsonSerializerOptions options)
             {
+                writer.WriteStartObject();
                 writer.WriteString("Str", hashstring.AsString());
+                writer.WriteEndObject();
             }
         }
 
@@ -135,7 +150,7 @@ namespace QuickScript
 
         private string Export(in TypeInstanceDescription type_desc)
         {
-            string retval = JsonSerializer.Serialize<HashString>(type_desc.Name, GetSerializationOptions());
+            string retval = JsonSerializer.Serialize<TypeInstanceDescription>(type_desc, GetSerializationOptions());
             return retval;
         }
         public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)

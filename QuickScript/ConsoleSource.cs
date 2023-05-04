@@ -21,34 +21,11 @@ namespace QuickScript
         {
             QuickscriptSettings settings = new QuickscriptSettings();
 
-            //IExporter exporter = new JSonExporter();
+            IExporter exporter = new JSonExporter();
             DataMap dm = DataMap.ConstructDataMap(settings.DataMapPath);
             dm.SaveToDisk(settings.DataMapPath);
 
-            //exporter.Export(new ExportSettings(), Parser.ParseDirectory(settings.QuickScriptsDirectory));
-
-
-            Employee tyler = new Employee();
-
-            Employee adrian = new()
-            {
-                Name = HashString.FromString("Adrian King")
-            };
-
-            tyler.DirectReports = new List<Employee> { adrian };
-            adrian.Manager = tyler;
-
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true,
-                IncludeFields = true,
-                Converters= { new JSonExporter.HashStringConverter() }
-            };
-
-            string tylerJson = JsonSerializer.Serialize<HashString>(tyler.Name, options);
-            var des = JsonSerializer.Deserialize<HashString>(tylerJson, options);
-            Console.WriteLine($"Tyler serialized:\n{tylerJson}");
+            exporter.Export(new ExportSettings(), Parser.ParseDirectory(settings.QuickScriptsDirectory));
         }
     }
 }
