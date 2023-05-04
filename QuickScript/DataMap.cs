@@ -112,5 +112,32 @@ namespace QuickScript
                 TypeDefinitions.Add(str);
             }
         }
+
+        TypeDefinition? GetTypeDefinitionByName(HashString name)
+        {
+            return TypeDefinitions.Find(x => x.Name == name);
+        }
+
+        bool HasTypeDefinitionByName(HashString name)
+        {
+            return GetTypeDefinitionByName(name) != null;
+        }
+
+        AttributeDefinition? GetAttributeDefinitionByName(HashString name)
+        {
+            return AttributeDefinitions.Find(x => x.Name == name);
+        }
+
+        bool HasAttributeDefinitionByName(HashString name)
+        {
+            return GetAttributeDefinitionByName(name) != null;
+        }
+
+        public void AssimilateTypeInstanceDescriptions(in List<TypeInstanceDescription> typeInstanceDescriptions)
+        {
+            foreach (TypeInstanceDescription description in typeInstanceDescriptions)
+            {
+            }
+        }
     }
 }

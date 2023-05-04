@@ -70,6 +70,21 @@ namespace QuickScript.Utils
             VerifyUniqueHash(str, hash);
         }
 
+        public static bool operator ==(HashString x, HashString y)
+        {
+            return x.Hash == y.Hash;
+        }
+        public static bool operator !=(HashString x, HashString y)
+        {
+            return x.Hash != y.Hash;
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is HashString))
+                return false;
+            return this == (HashString)o;
+        }
+
         public void Reset(string str)
         {
             Hash = GenerateHash(str);
