@@ -1,4 +1,5 @@
-﻿using QuickScript.Utils;
+﻿using QuickScript.Exporters;
+using QuickScript.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +15,11 @@ namespace QuickScript
         public List<AttributeDefinition> AttributeDefinitions = new List<AttributeDefinition>();
         public List<TypeDefinition> TypeDefinitions = new List<TypeDefinition>();
 
-        private DataMap() 
+        [JsonConstructor]
+        public DataMap(List<AttributeDefinition> attributeDefinitions, List<TypeDefinition> typeDefinitions)
         {
-            ConstructBaseMap();
-        }
-
-        private static JsonSerializerOptions GetSerializationOptions()
-        {
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true
-            };
-
-            return options;
+            AttributeDefinitions = attributeDefinitions;
+            TypeDefinitions = typeDefinitions;
         }
 
         public static DataMap ConstructDataMap(in string existing_map_file_path = "")
@@ -39,7 +31,7 @@ namespace QuickScript
                 {
                     if (File.Exists(existing_map_file_path))
                     {
-                        DataMap deserialized = JsonSerializer.Deserialize<DataMap>(File.ReadAllText(existing_map_file_path), GetSerializationOptions());
+                        DataMap deserialized = JsonSerializer.Deserialize<DataMap>(File.ReadAllText(existing_map_file_path), JSonExporter.GetSerializationOptions());
                         if (deserialized != null)
                         {
                             retval = deserialized;
@@ -57,7 +49,10 @@ namespace QuickScript
             }
             catch (Exception ex)
             {
-                retval = new DataMap();
+                Assertion.Warn("Unable to create datamap from existing file!");
+                Assertion.SoftAssert(false, ex.Message);
+                retval = new DataMap(new List<AttributeDefinition>(), new List<TypeDefinition>());
+                retval.ConstructBaseMap();
             }
 
             return retval;
@@ -71,7 +66,8 @@ namespace QuickScript
 
         public void SaveToDisk(in string output_file_path)
         {
-            string jsonString = JsonSerializer.Serialize<DataMap>(this, GetSerializationOptions());
+            JSonExporter jSonExporter = new JSonExporter();
+            string jsonString = jSonExporter.Export(this);
             File.WriteAllText(output_file_path, jsonString);
         }
 
