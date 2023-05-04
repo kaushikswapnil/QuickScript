@@ -161,51 +161,127 @@ namespace QuickScript
             //}
         }
 
+        private AttributeTag? ParseAttributeDescriptionIntoTag(AttributeInstanceDescription attr_desc)
+        {
+            AttributeDefinition? attr_def = GetAttributeDefinitionByName(attr_desc.Name);
+            if (attr_def != null)
+            {
+                List<ValueType> attr_values = null;
+                if (attr_desc.HasValues())
+                {
+                    if (attr_desc.Values.Count >= attr_def.MinValueCount && attr_desc.Values.Count <= attr_def.MaxValueCount)
+                    {
+                        attr_values = attr_desc.Values;
+                    }
+                    else
+                    {
+                        //throw InvalidAttributeDescription
+                    }
+                }
+
+                return new AttributeTag(attr_def, attr_values);
+            }
+            else
+            {
+                //throw InvalidAttributeDescription
+            }
+
+            return null;
+        }
+
+        private TypeDefinition? ParseTypeDescriptionToDefinition(in TypeInstanceDescription type_desc)
+        {
+            TypeDefinition new_def = new TypeDefinition(description.Name);
+            List<AttributeTag> attr_tags = null;
+            List<TypeDefinition.MemberDefinition> members = null;
+            if (description.HasAttributes())
+            {
+                //first try to create attribute tags for each attr inst
+                attr_tags = new List<AttributeTag>();
+                foreach (AttributeInstanceDescription attr_desc in description.Attributes)
+                {
+                    AttributeTag new_attr = ParseAttributeDescriptionIntoTag(attr_desc);
+                    if (new_attr != null)
+                    {
+                        attr_tags.Add(new_attr);
+                    }
+                }
+            }
+
+            if (description.HasMembers())
+            {
+                members = new List<TypeDefinition.MemberDefinition>();
+                foreach (TypeInstanceDescription.MemberDescription member_desc in description.Members)
+                {
+                    TypeDefinition? member_type = GetTypeDefinitionByName(member_desc.TypeDescription.Name);
+                    if (member_type != null)
+                    {
+                        if (members.Find(x => x.Name == member_desc.Name) == null)
+                        {
+                            TypeDefinition.MemberDefinition new_member = new TypeDefinition.MemberDefinition();
+                            new_member.Name = member_desc.Name;
+                            new_member.Type = member_type;
+
+                            if (member_desc.HasValue())
+                            {
+                                new_member.Value = member_desc.Value;
+                            }
+
+                            if (member_desc.HasAttributes())
+                            {
+                                List<AttributeTag> mem_attr_tags = new List<AttributeTag>();
+                                foreach (AttributeInstanceDescription attr_desc in member_desc.Attributes)
+                                {
+                                    AttributeTag new_attr = ParseAttributeDescriptionIntoTag(attr_desc);
+                                    if (new_attr != null)
+                                    {
+                                        mem_attr_tags.Add(new_attr);
+                                    }
+                                }
+                            }
+
+                            members.Add(new_member);
+                        }
+                        else
+                        {
+                            //throw InvalidMemberDesc, same name exists
+                        }
+                    }
+                    else
+                    {
+                        //throw InvalidMemberDescription
+                    }
+                }
+            }
+
+            new_def.Attributes = attr_tags;
+            new_def.Members = members;
+
+            return new_def;
+        }
+
         public void AssimilateTypeInstanceDescriptions(in List<TypeInstanceDescription> typeInstanceDescriptions)
         {
             List<TypeDefinition> processed_defs = new List<TypeDefinition>();
 
             foreach (TypeInstanceDescriptiomn description in typeInstanceDescriptions)
             {
-                TypeDefinition? existing_def = GetAttributeDefinitionByName(description.Name);
-                if (existing_def != null)
+                TypeDefinition? new_def = ParseTypeDescriptionToDefinition(description);
+
+                if (new_def != null)
                 {
-                    //we have a type with this name already
-                    //check for any changes
-                    TypeDefinition new_def = new TypeDefinition(description.Name);
-                    List<AttributeTag> attr_tags = null;
+                    TypeDefinition? existing_def = GetAttributeDefinitionByName(description.Name);
 
-                    if (description.HasAttributes())
+                    if (existing_def != null)
                     {
-                        //first try to create attribute tags for each attr inst
-                        attr_tags = new List<AttributeTag>();
-                        foreach (AttributeInstanceDescription attr_desc in description.Attributes)
-                        {
-                            AttributeDefinition? attr_def = GetAttributeDefinitionByName(attr_desc.Name);
-                            if (attr_def != null)
-                            {
-                                List<ValueType> attr_values = null;
-                                if (attr_desc.HasValues())
-                                {
-                                    if (attr_desc.Values.Count >= attr_def.MinValueCount && attr_desc.Values.Count <= attr_def.MaxValueCount)
-                                    {
-                                        attr_values = attr_desc.Values;
-                                    }
-                                    else
-                                    {
-                                        //throw InvalidAttributeDescription
-                                    }
-                                }
-
-                                attr_tags.Add(new AttributeTag(attr_def, attr_values));
-                            }
-                            else
-                            {
-                                //throw InvalidAttributeDescription
-                            }
-                        }
+                        //we have a type with this name already
+                        //check for any changes
+                        //throw errors
                     }
-                    
+                    else
+                    {
+                        processed_defs.Add(new_def);
+                    }
                 }
             }
         }
