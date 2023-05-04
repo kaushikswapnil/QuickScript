@@ -15,7 +15,6 @@ namespace QuickScript.Exporters
         {
             JsonSerializerOptions options = new()
             {
-                ReferenceHandler = ReferenceHandler.Preserve,
                 WriteIndented = true,
                 IncludeFields = true,
             };
