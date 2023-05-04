@@ -27,7 +27,7 @@ namespace QuickScript
             dm.AssimilateTypeInstanceDescriptions(Parser.ParseDirectory(settings.QuickScriptsDirectory));
             dm.SaveToDisk(settings.DataMapPath);
 
-            exporter.Export(new ExportSettings(), Parser.ParseDirectory(settings.QuickScriptsDirectory));
+            exporter.Export(new ExportSettings(), dm);
         }
     }
 }
