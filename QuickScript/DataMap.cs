@@ -139,51 +139,6 @@ namespace QuickScript
             return GetAttributeDefinitionByName(name) != null;
         }
 
-        private class InvalidAttributeDescription : Exception
-        {
-            public enum Reason
-            {
-                CouldNotFindDefinition,
-                ValueCountIsNotWithinLimits,
-                ValueTypeIsIncorrect
-            };
-
-            public Reason FailReason;
-
-            public InvalidAttributeDescription(Reason reason)
-            {
-                FailReason= reason;
-            }
-        }
-
-        private AttributeTag? ParseAttributeDescriptionIntoTag(AttributeInstanceDescription attr_desc)
-        {
-            AttributeDefinition? attr_def = GetAttributeDefinitionByName(attr_desc.Name);
-            if (attr_def != null)
-            {
-                List<ValueType> attr_values = null;
-                if (attr_desc.HasValues())
-                {
-                    if (attr_desc.Values.Count >= attr_def.MinValueCount && attr_desc.Values.Count <= attr_def.MaxValueCount)
-                    {
-                        attr_values = attr_desc.Values;
-                    }
-                    else
-                    {
-                        throw new InvalidAttributeDescription();
-                    }
-                }
-
-                return new AttributeTag(attr_def, attr_values);
-            }
-            else
-            {
-                throw new InvalidAttributeDescription();
-            }
-
-            return null;
-        }
-
         private TypeDefinition? ParseTypeDescriptionToDefinition(in TypeInstanceDescription description)
         {
             TypeDefinition new_def = new TypeDefinition(description.Name);
@@ -192,15 +147,7 @@ namespace QuickScript
             if (description.HasAttributes())
             {
                 //first try to create attribute tags for each attr inst
-                attr_tags = new List<AttributeTag>();
-                foreach (AttributeInstanceDescription attr_desc in description.Attributes)
-                {
-                    AttributeTag new_attr = ParseAttributeDescriptionIntoTag(attr_desc);
-                    if (new_attr != null)
-                    {
-                        attr_tags.Add(new_attr);
-                    }
-                }
+                attr_tags = TypeInformationUtils.ParseAttributeDescriptionsIntoTags(description.Attributes);
             }
 
             if (description.HasMembers())
@@ -229,7 +176,7 @@ namespace QuickScript
                                 List<AttributeTag> mem_attr_tags = new List<AttributeTag>();
                                 foreach (AttributeInstanceDescription attr_desc in member_desc.Attributes)
                                 {
-                                    AttributeTag new_attr = ParseAttributeDescriptionIntoTag(attr_desc);
+                                    AttributeTag new_attr = TypeInformationUtils.ParseAttributeDescriptionIntoTag(this, attr_desc);
                                     if (new_attr != null)
                                     {
                                         mem_attr_tags.Add(new_attr);
