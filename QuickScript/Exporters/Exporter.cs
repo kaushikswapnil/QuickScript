@@ -78,7 +78,7 @@ namespace QuickScript.Exporters
             {
                 foreach (TypeInstanceDescription.MemberDescription member in type_desc.Members)
                 {
-                    retval += member.TypeDescription.Name.AsString() + " " + member.Name.AsString();
+                    retval += member.TypeName.AsString() + " " + member.Name.AsString();
                     if (member.HasValue())
                     {
                         retval += " = " + member.Value;

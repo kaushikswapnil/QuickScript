@@ -213,7 +213,7 @@ namespace QuickScript
                 members = new List<TypeDefinition.MemberDefinition>();
                 foreach (TypeInstanceDescription.MemberDescription member_desc in description.Members)
                 {
-                    TypeDefinition? member_type = GetTypeDefinitionByName(member_desc.TypeDescription.Name);
+                    TypeDefinition? member_type = GetTypeDefinitionByName(member_desc.TypeName);
                     if (member_type != null)
                     {
                         if (members.Find(x => x.Name == member_desc.Name) == null)

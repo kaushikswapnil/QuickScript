@@ -114,7 +114,7 @@ namespace QuickScript
         {
             public HashString Name { get; set; } = new HashString();
             public ValueType? Value { get; set; }
-            public TypeInstanceDescription TypeDescription { get; set; } = new TypeInstanceDescription();
+            public HashString TypeName { get; set; } = new HashString();
             public List<AttributeInstanceDescription>? Attributes { get; set; }
 
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }

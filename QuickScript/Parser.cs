@@ -176,7 +176,7 @@ namespace QuickScript
                     }
                     //type, name
                     cur_member.Name.Reset(unhandled_tokens.Pop());
-                    cur_member.TypeDescription.Name.Reset(unhandled_tokens.Pop());
+                    cur_member.TypeName.Reset(unhandled_tokens.Pop());
 
                     cur_members.Add(cur_member);
                     cur_member = new TypeInstanceDescription.MemberDescription();
