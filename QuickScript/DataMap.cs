@@ -119,22 +119,22 @@ namespace QuickScript
             }
         }
 
-        TypeDefinition? GetTypeDefinitionByName(HashString name)
+        public TypeDefinition? GetTypeDefinitionByName(HashString name)
         {
             return TypeDefinitions.Find(x => x.Name == name);
         }
 
-        bool HasTypeDefinitionByName(HashString name)
+        public bool HasTypeDefinitionByName(HashString name)
         {
             return GetTypeDefinitionByName(name) != null;
         }
 
-        AttributeDefinition? GetAttributeDefinitionByName(HashString name)
+        public AttributeDefinition? GetAttributeDefinitionByName(HashString name)
         {
             return AttributeDefinitions.Find(x => x.Name == name);
         }
 
-        bool HasAttributeDefinitionByName(HashString name)
+        public bool HasAttributeDefinitionByName(HashString name)
         {
             return GetAttributeDefinitionByName(name) != null;
         }
@@ -147,7 +147,7 @@ namespace QuickScript
             if (description.HasAttributes())
             {
                 //first try to create attribute tags for each attr inst
-                attr_tags = TypeInformationUtils.ParseAttributeDescriptionsIntoTags(description.Attributes);
+                attr_tags = TypeInformationUtils.ParseAttributeDescriptionsIntoTags(this, description.Attributes);
             }
 
             if (description.HasMembers())
