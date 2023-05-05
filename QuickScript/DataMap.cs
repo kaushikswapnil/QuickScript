@@ -139,26 +139,21 @@ namespace QuickScript
             return GetAttributeDefinitionByName(name) != null;
         }
 
-        private TypeDefinition? ProcessTypeInstanceDescription(TypeInstanceDescription description)
+        private class InvalidAttributeDescription : Exception
         {
-            return null;
-            //
-            //public class InvalidAttributeDescription : Exception
-            //{
-            //    public InvalidAttributeDescription()
-            //    {
-            //    }
+            public enum Reason
+            {
+                CouldNotFindDefinition,
+                ValueCountIsNotWithinLimits,
+                ValueTypeIsIncorrect
+            };
 
-            //    public InvalidAttributeDescription(string message)
-            //        : base(message)
-            //    {
-            //    }
+            public Reason FailReason;
 
-            //    public InvalidAttributeDescription(string message, Exception inner)
-            //        : base(message, inner)
-            //    {
-            //    }
-            //}
+            public InvalidAttributeDescription(Reason reason)
+            {
+                FailReason= reason;
+            }
         }
 
         private AttributeTag? ParseAttributeDescriptionIntoTag(AttributeInstanceDescription attr_desc)
@@ -175,7 +170,7 @@ namespace QuickScript
                     }
                     else
                     {
-                        //throw InvalidAttributeDescription
+                        throw new InvalidAttributeDescription();
                     }
                 }
 
@@ -183,7 +178,7 @@ namespace QuickScript
             }
             else
             {
-                //throw InvalidAttributeDescription
+                throw new InvalidAttributeDescription();
             }
 
             return null;
