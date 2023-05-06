@@ -127,7 +127,7 @@ namespace QuickScript.Exporters
             {
                 var attr_tag = attributeTags[attr_i];
                 retval += attr_i > 0 ? ", " : "";
-                retval += attr_tag.Attribute.Name.ToString();
+                retval += attr_tag.AttributeName.ToString();
                 if (attr_tag.HasValues())
                 {
                     retval += "(";
@@ -167,7 +167,7 @@ namespace QuickScript.Exporters
                         {
                             retval += "\n" + Export(member.Attributes);
                         }
-                        retval += "\n" + member.Type.Name.ToString() + " " + member.Name.ToString();
+                        retval += "\n" + member.TypeName.ToString() + " " + member.Name.ToString();
                         if (member.HasValue())
                         {
                             retval += " = " + member.Value;
