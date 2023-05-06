@@ -139,80 +139,13 @@ namespace QuickScript
             return GetAttributeDefinitionByName(name) != null;
         }
 
-        private TypeDefinition? ParseTypeDescriptionToDefinition(in TypeInstanceDescription description)
-        {
-            TypeDefinition new_def = new TypeDefinition(description.Name);
-            List<AttributeTag> attr_tags = null;
-            List<TypeDefinition.MemberDefinition> members = null;
-            if (description.HasAttributes())
-            {
-                //first try to create attribute tags for each attr inst
-                attr_tags = TypeInformationUtils.ParseAttributeDescriptionsIntoTags(this, description.Attributes);
-            }
-
-            if (description.HasMembers())
-            {
-                members = new List<TypeDefinition.MemberDefinition>();
-                foreach (TypeInstanceDescription.MemberDescription member_desc in description.Members)
-                {
-                    TypeDefinition? member_type = GetTypeDefinitionByName(member_desc.TypeName);
-                    if (member_type != null)
-                    {
-                        if (members.Find(x => x.Name == member_desc.Name) == null)
-                        {
-                            TypeDefinition.MemberDefinition new_member = new TypeDefinition.MemberDefinition
-                            {
-                                Name = member_desc.Name,
-                                Type = member_type
-                            };
-
-                            if (member_desc.HasValue())
-                            {
-                                new_member.Value = member_desc.Value;
-                            }
-
-                            if (member_desc.HasAttributes())
-                            {
-                                List<AttributeTag> mem_attr_tags = new List<AttributeTag>();
-                                foreach (AttributeInstanceDescription attr_desc in member_desc.Attributes)
-                                {
-                                    AttributeTag new_attr = TypeInformationUtils.ParseAttributeDescriptionIntoTag(this, attr_desc);
-                                    if (new_attr != null)
-                                    {
-                                        mem_attr_tags.Add(new_attr);
-                                    }
-                                }
-
-                                new_member.Attributes = mem_attr_tags;
-                            }
-
-                            members.Add(new_member);
-                        }
-                        else
-                        {
-                            //throw InvalidMemberDesc, same name exists
-                        }
-                    }
-                    else
-                    {
-                        //throw InvalidMemberDescription
-                    }
-                }
-            }
-
-            new_def.Attributes = attr_tags;
-            new_def.Members = members;
-
-            return new_def;
-        }
-
         public void AssimilateTypeInstanceDescriptions(in List<TypeInstanceDescription> typeInstanceDescriptions)
         {
             List<TypeDefinition> processed_defs = new List<TypeDefinition>();
 
             foreach (TypeInstanceDescription description in typeInstanceDescriptions)
             {
-                TypeDefinition? new_def = ParseTypeDescriptionToDefinition(description);
+                TypeDefinition? new_def = TypeInformationUtils.ParseTypeDescriptionToPotentialDefinition(this, description);
 
                 if (new_def != null)
                 {

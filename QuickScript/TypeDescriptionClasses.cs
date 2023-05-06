@@ -13,6 +13,8 @@ namespace QuickScript
 
         public static implicit operator string(ValueType val) => val.Val;
         public static explicit operator ValueType(string val) => new ValueType(val);
+
+        public string AsString() { return Val; }
     }
 
     public class AttributeDefinition

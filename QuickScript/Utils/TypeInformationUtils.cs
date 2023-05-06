@@ -8,6 +8,43 @@ namespace QuickScript.Utils
 {
     public static class TypeInformationUtils
     {
+        public static AttributeInstanceDescription? GetAttributeInstanceDescription(HashString attr_name, TypeInstanceDescription type_desc)
+        {
+            if (type_desc.HasAttributes())
+            {
+                return type_desc.Attributes.Find(x => x.Name == attr_name);
+            }
+
+            return null;
+        }
+
+        public static bool HasAttributeDescription(HashString attr_name, TypeInstanceDescription type_desc)
+        {
+            return GetAttributeInstanceDescription(attr_name, type_desc) != null;
+        }
+
+        public static List<ValueType>? GetAttributeDescriptionValues(HashString attr_name, TypeInstanceDescription type_desc)
+        {
+            var attr_desc = GetAttributeInstanceDescription(attr_name, type_desc);
+            if (attr_desc != null)
+            {
+                return attr_desc.Values;
+            }
+
+            return null;
+        }
+
+        public static ValueType? GetAttributeDescriptionFirstValue(HashString attr_name, TypeInstanceDescription type_desc)
+        {
+            List<ValueType> values = GetAttributeDescriptionValues(attr_name, type_desc);
+            if (values != null)
+            {
+                return values[0];
+            }
+
+            return null;
+        }
+
         public class InvalidAttributeDescription : Exception
         {
             public enum Reason
@@ -35,6 +72,8 @@ namespace QuickScript.Utils
                     case Reason.ValueTypeIsIncorrect:
                         return "Attribute " + attr_desc.Name.ToString() + " has values that are incompatible with it!";
                 }
+
+                Assertion.Assert(reason == Reason.Unknown, "Unhandled reason in InvalidAttributeDescription");
 
                 return "Could not parse attribute " + attr_desc.Name.ToString() + " with unknown reason";
             }
@@ -118,21 +157,59 @@ namespace QuickScript.Utils
                 InvalidAttributes
             };
 
-            public Reason FailReason = Reason.Unknown;
-
-            public InvalidTypeDescription(Reason reason, TypeInstanceDescription parent) : base() 
+            static string CreateTypeNameFileNameCombination(TypeInstanceDescription parent)
             {
-                FailReason = reason;
+                string retval = parent.Name.AsString();
+                ValueType? parent_file_path = GetAttributeDescriptionFirstValue(new HashString("FilePath"), parent);
+                if (parent_file_path != null)
+                {
+                    retval += "[" + parent_file_path.AsString() + "]";
+                }
+
+                return retval;
             }
 
-            public InvalidTypeDescription(Reason reason, string message) : base(message)
+            static string CreateErrorMessage(Reason reason, TypeInstanceDescription parent, TypeInstanceDescription.MemberDescription fail_member, InvalidAttributeDescription ex)
             {
-                FailReason = reason;
+                string type_file_name_combo = CreateTypeNameFileNameCombination(parent);
+                switch (reason)
+                {
+                   case Reason.MemberTypeNotFound:
+                        Assertion.Assert(fail_member != null, "Should have a member that failed here!");
+                        return "Type " + type_file_name_combo + " could not be parsed because member " + fail_member.Name.AsString() + 
+                            " had a type " + fail_member.TypeName.AsString() + " that could not be found";
+
+                   case Reason.MembersWithSameName:
+                        Assertion.Assert(fail_member != null, "Should have a member that failed here");
+                        return "Type " + type_file_name_combo + " could not be parsed because member " + fail_member.Name.AsString() +
+                            " has same name as another member";
+                   case Reason.MemberHasInvalidAttributes:
+                        Assertion.Assert(fail_member != null, "Should have a member that failed here!");
+                        Assertion.Assert(ex != null, "Should have an invalid attr ex if we are here");
+                        return "Type " + type_file_name_combo + " could not be parsed because member " + fail_member.Name.AsString() +
+                            " has invalid attributes. Error: " + ex.Message;
+
+                   case Reason.InvalidAttributes:
+                        Assertion.Assert(ex != null, "Should have an invalid attr ex if we are here");
+                        return "Type " + type_file_name_combo + " has invalid attributes and could not be handled! Error: " + ex.Message;
+
+                }
+
+                Assertion.Assert(reason == Reason.Unknown, "Unhandled reason in InvalidTypeDescription");
+
+                return "Could not handle type " + type_file_name_combo;
+            }
+
+            public InvalidTypeDescription(Reason reason, TypeInstanceDescription parent,
+                TypeInstanceDescription.MemberDescription fail_member, InvalidAttributeDescription ex) 
+                : base(CreateErrorMessage(reason, parent, fail_member, ex))
+            {
             }
         }
 
-        public static List<TypeDefinition.MemberDefinition> ParseMemberDescriptionsIntoDefinitions(DataMap dm, List<TypeInstanceDescription.MemberDescription> mem_descriptions, TypeInstanceDescription parent) 
+        public static List<TypeDefinition.MemberDefinition> ParseMemberDescriptionsIntoDefinitions(DataMap dm, TypeInstanceDescription parent) 
         {
+            List<TypeInstanceDescription.MemberDescription> mem_descriptions = parent.Members;
             Assertion.Assert(mem_descriptions.Count > 0, "Should only call this method when we have attr descriptions");
             try
             {
@@ -143,12 +220,12 @@ namespace QuickScript.Utils
                     TypeDefinition? member_type = dm.GetTypeDefinitionByName(mem_desc.TypeName);
                     if (member_type == null)
                     {
-                        throw new InvalidTypeDescription(InvalidTypeDescription.Reason.MemberTypeNotFound, "Member " + mem_desc.Name.ToString() + " has type " + mem_desc.TypeName.ToString() + " that could not be found!");
+                        throw new InvalidTypeDescription(InvalidTypeDescription.Reason.MemberTypeNotFound, parent, mem_desc, null);
                     }
 
                     if (mem_descriptions.Find(x => x != mem_desc && x.Name == mem_desc.Name) != null)
                     {
-                        throw new InvalidTypeDescription(InvalidTypeDescription.Reason.MembersWithSameName, "Member " + mem_desc.Name.ToString() + " has same name as another member! Cannot have two members with the same name!");
+                        throw new InvalidTypeDescription(InvalidTypeDescription.Reason.MembersWithSameName, parent, mem_desc, null);
                     }
 
                     TypeDefinition.MemberDefinition new_member = new TypeDefinition.MemberDefinition
@@ -170,7 +247,7 @@ namespace QuickScript.Utils
                         }
                         catch (InvalidAttributeDescription e)
                         {
-                            throw;
+                            throw new InvalidTypeDescription(InvalidTypeDescription.Reason.MemberHasInvalidAttributes, parent, mem_desc, e);
                         }
                     }
                 }
@@ -181,6 +258,28 @@ namespace QuickScript.Utils
             {
                 throw;
             }
+        }
+
+        static public TypeDefinition ParseTypeDescriptionToPotentialDefinition(DataMap dm, TypeInstanceDescription description)
+        {
+            List<AttributeTag> attr_tags = null;
+            List<TypeDefinition.MemberDefinition> members = null;
+            if (description.HasAttributes())
+            {
+                //first try to create attribute tags for each attr inst
+                attr_tags = TypeInformationUtils.ParseAttributeDescriptionsIntoTags(dm, description.Attributes);
+            }
+
+            if (description.HasMembers())
+            {
+                members = TypeInformationUtils.ParseMemberDescriptionsIntoDefinitions(dm, description);
+            }
+
+            TypeDefinition new_def = new TypeDefinition(description.Name);
+            new_def.Attributes = attr_tags;
+            new_def.Members = members;
+
+            return new_def;
         }
     }
 }
