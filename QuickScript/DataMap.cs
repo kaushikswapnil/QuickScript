@@ -15,11 +15,15 @@ namespace QuickScript
         public List<AttributeDefinition> AttributeDefinitions = new List<AttributeDefinition>();
         public List<TypeDefinition> TypeDefinitions = new List<TypeDefinition>();
 
-        [JsonConstructor]
         public DataMap(List<AttributeDefinition> attributeDefinitions, List<TypeDefinition> typeDefinitions)
         {
             AttributeDefinitions = attributeDefinitions;
             TypeDefinitions = typeDefinitions;
+        }
+
+        public DataMap() 
+        {
+            ConstructBaseMap();
         }
 
         public static DataMap ConstructDataMap(in string existing_map_file_path = "")
@@ -31,7 +35,7 @@ namespace QuickScript
                 {
                     if (File.Exists(existing_map_file_path))
                     {
-                        DataMap deserialized = JsonSerializer.Deserialize<DataMap>(File.ReadAllText(existing_map_file_path), JSonExporter.GetSerializationOptions());
+                        DataMap deserialized = JsonSerializer.Deserialize<DataMap>(File.ReadAllText(existing_map_file_path), JSonExportUtils.GetSerializationOptions());
                         if (deserialized != null)
                         {
                             retval = deserialized;
