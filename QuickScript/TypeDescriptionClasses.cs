@@ -22,7 +22,7 @@ namespace QuickScript
         public HashString Name { get; set; }
         public int MinValueCount { get; set; } = 0;
         public int MaxValueCount { get; set; } = 0;
-        public HashString ValueTypeName = new HashString("int");
+        public HashString ValueTypeName = new HashString();
         public AttributeDefinition(HashString name, int minValueCount, int maxValueCount, HashString valueTypeName)
         {
             Name = name;
@@ -46,18 +46,18 @@ namespace QuickScript
 
     public class AttributeTag
     {
-        public AttributeDefinition Attribute { get; set; }
+        public HashString AttributeName { get; set; }
         public List<ValueType>? Values { get; set; }
         public bool HasValues() { return Values != null && Values.Count > 0;}
 
         public AttributeTag(AttributeDefinition attr_def)
         {
-            Attribute = attr_def;
+            AttributeName = attr_def.Name;
             Values = null;
         }
         public AttributeTag(AttributeDefinition attr_def, in List<ValueType> values)
         {
-            Attribute = attr_def;
+            AttributeName = attr_def.Name;
             Values = values;
         }
     }
@@ -87,7 +87,7 @@ namespace QuickScript
         {
             public HashString Name { get; set;} = new HashString();
             public List<AttributeTag> Attributes { get; set; } = new List<AttributeTag>();
-            public TypeDefinition Type { get; set; }
+            public HashString TypeName { get; set; }
             public ValueType? Value { get; set; }
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
             public bool HasValue() { return Value != null; }

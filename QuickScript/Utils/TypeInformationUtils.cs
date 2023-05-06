@@ -231,7 +231,7 @@ namespace QuickScript.Utils
                     TypeDefinition.MemberDefinition new_member = new TypeDefinition.MemberDefinition
                     {
                         Name = mem_desc.Name,
-                        Type = member_type
+                        TypeName = mem_desc.TypeName
                     };
 
                     if (mem_desc.HasValue())
