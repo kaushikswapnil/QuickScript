@@ -1,4 +1,5 @@
 ﻿using QuickScript.Utils;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace QuickScript
@@ -71,6 +72,8 @@ namespace QuickScript
             AttributeDefinition y = (AttributeDefinition)o;
             return x.Name == y.Name && x.MinValueCount == y.MinValueCount && x.MaxValueCount == y.MaxValueCount && x.ValueTypeName == y.ValueTypeName;
         }
+
+        public string GetName() { return Name.AsString(); }
     }
 
     public class AttributeTag
@@ -174,11 +177,9 @@ namespace QuickScript
 
                 if (x.HasAttributes())
                 {
-                    for (int attr_tag_iter = 0; attr_tag_iter < x.Attributes.Count; ++attr_tag_iter)
-                    {
-                        if (x.Attributes[attr_tag_iter] != y.Attributes[attr_tag_iter])
-                            return false;
-                    }
+                    x.Attributes.SequenceEqual(y.Attributes);
+                    if (x.Attributes.SequenceEqual(y.Attributes) == false)
+                        return false;
                 }
 
                 if (x.HasValue() && x.Value != y.Value)
@@ -241,6 +242,7 @@ namespace QuickScript
 
             return true;
         }
+        public string GetName() { return Name.AsString(); }
     }
 
     public class TypeInstanceDescription
