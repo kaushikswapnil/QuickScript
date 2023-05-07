@@ -1,6 +1,7 @@
 ﻿using QuickScript.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,32 +10,69 @@ namespace QuickScript.Exporters
 {
     internal class CppExporter : IExporter
     {
-        public abstract class ICppOutputSectionProperty
+        public abstract class IOutputSectionProperty
         {
-            ICppOutputSection Parent;
-            public ICppOutputSectionProperty(ref ICppOutputSection parent) {  Parent = parent; }
-            public abstract string SectionStringOutput();
+            IOutputSection Parent;
+            public IOutputSectionProperty(ref IOutputSection parent) {  Parent = parent; }
+            public abstract string PropertyStringOutput();
         }
-        public abstract class ICppOutputSection
+        public abstract class IOutputSection
         {
-            CppOutputFile Parent;
-            List<ICppOutputSectionProperty> Children;
-            public ICppOutputSection(ref CppOutputFile parent, List<ICppOutputSectionProperty> childen) 
+            protected OutputFile Parent;
+            protected List<IOutputSectionProperty> Children;
+
+            public IOutputSection(ref OutputFile parent)
+            {
+                Parent = parent;
+                Children = null;
+            }
+            public IOutputSection(ref OutputFile parent, List<IOutputSectionProperty> childen) 
             {
                 Parent = parent;
                 Children = childen;
             }
+
+            public abstract string SectionStringOutput();
         }
-        public class CppOutputFile
+        public class ReferenceOutputSection : IOutputSection
         {
-            List<ICppOutputSectionProperty> SectionProperties;
-            public CppOutputFile() { }
-        }
-        public class CppOutputUnit
-        {
-            public CppOutputUnit(List<TypeDefinition> type_defs_in_file) 
+            private class ReferenceProperty : IOutputSectionProperty
             {
+                public string RefPath { get; set; }
+                public ReferenceProperty(ref IOutputSection parent, string ref_path) : base(ref parent)
+                {
+                    RefPath = ref_path;
+                }
+
+                public override string PropertyStringOutput()
+                {
+                    return "#include<" + RefPath + ".h>\n";
+                }
             }
+            private List<IOutputSectionProperty> CreateReferencePropertiesList(OutputFile parent)
+            {
+                List<IOutputSectionProperty> retval = new List<IOutputSectionProperty>();
+
+                return retval;
+            }
+            public ReferenceOutputSection(ref OutputFile parent) : base(ref parent)
+            {
+                Children = CreateReferencePropertiesList(parent);
+            }
+            public override string SectionStringOutput()
+            {
+                string retval = "";
+                foreach (IOutputSectionProperty prop in Children)
+                {
+                    retval += prop.PropertyStringOutput();
+                }
+
+                return retval;
+            }
+        }
+        public class OutputFile
+        {
+            public OutputFile() { }
         }
 
         public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
