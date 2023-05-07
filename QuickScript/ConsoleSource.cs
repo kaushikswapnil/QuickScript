@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using QuickScript.Utils;
 using QuickScript.Exporters;
+using QuickScript.Testing;
 
 namespace QuickScript
 {
@@ -20,14 +21,7 @@ namespace QuickScript
         }
         static public void Main(string[] args)
         {
-            QuickscriptSettings settings = new QuickscriptSettings();
-
-            IExporter exporter = new JSonExporter();
-            DataMap dm = DataMap.ConstructDataMap(settings.DataMapPath);
-            dm.AssimilateTypeInstanceDescriptions(Parser.ParseDirectory(settings.QuickScriptsDirectory));
-            dm.SaveToDisk(settings.DataMapPath);
-
-            exporter.Export(new ExportSettings(), dm);
+            Testing.TestsSuite test = new TestsSuite();
         }
     }
 }
