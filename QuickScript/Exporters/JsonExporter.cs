@@ -117,6 +117,9 @@ namespace QuickScript.Exporters
                     string str = reader.GetString();
                     HashString attr_tag_name = new HashString(str);
 
+                    read = reader.Read();
+                    Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                    read = reader.Read();
                     Assertion.Assert(reader.TokenType == JsonTokenType.StartArray, "Error reading TypeDefinition object");
                     read = reader.Read();
                     List<ValueType> attr_vals = new List<ValueType>();
@@ -135,6 +138,11 @@ namespace QuickScript.Exporters
                         read = reader.Read();
                     }
 
+                    read = reader.Read();
+                    Assertion.Assert(reader.TokenType == JsonTokenType.EndObject, "Error reading TypeDefinition object");
+
+                    read = reader.Read();
+
                     retval.Add(new AttributeTag(attr_tag_name, attr_vals.Count > 0 ? attr_vals : null));
                 }
 
@@ -147,9 +155,11 @@ namespace QuickScript.Exporters
             Assertion.Assert(read, "Error reading TypeDefinition object");
             Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
             read = reader.Read();
+            Assertion.Assert(reader.TokenType == JsonTokenType.String, "Error reading TypeDefinition object");
             string str = reader.GetString();
             HashString type_def_name = new HashString(str);
 
+            read = reader.Read();
             List<AttributeTag> type_attributes = ReadAttributeTags(ref reader);
 
             read = reader.Read();
@@ -159,6 +169,7 @@ namespace QuickScript.Exporters
             read = reader.Read();
             Assertion.Assert(reader.TokenType == JsonTokenType.StartArray, "Error reading TypeDefinition object");
             List<TypeDefinition.MemberDefinition> mem_defs = new List<TypeDefinition.MemberDefinition>();
+            read = reader.Read();
             while (reader.TokenType != JsonTokenType.EndArray)
             {
                 read = reader.Read();
@@ -179,6 +190,7 @@ namespace QuickScript.Exporters
                 Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
                 str = reader.GetString();
                 ValueType mem_val = str == "" ? new ValueType(str) : null;
+                read = reader.Read();
                 List<AttributeTag> mem_attributes = ReadAttributeTags(ref reader);
                 read = reader.Read();
 
@@ -196,41 +208,43 @@ namespace QuickScript.Exporters
                 TypeDefinition type_def,
                 JsonSerializerOptions options)
         {
-            void WriteAttributeTagsList(List<AttributeTag> attr_list)
+            void WriteAttributeTagsList(List<AttributeTag>? attr_list)
             {
-                foreach (AttributeTag tag in attr_list)
+                writer.WritePropertyName("Attributes");
+                writer.WriteStartArray();
+
+                if (attr_list != null)
                 {
-                    writer.WriteStartObject();
-                    writer.WriteString("AttributeName", tag.AttributeName.AsString());
+                    foreach (AttributeTag tag in attr_list)
                     {
-                        writer.WriteStartArray();
-                        if (tag.HasValues())
+                        writer.WriteStartObject();
+                        writer.WriteString("AttributeName", tag.AttributeName.AsString());
                         {
-                            foreach (ValueType val in tag.Values)
+                            writer.WritePropertyName("Values");
+                            writer.WriteStartArray();
+                            if (tag.HasValues())
                             {
-                                writer.WriteStartObject();
-                                writer.WriteString("Val", val.Val);
-                                writer.WriteEndObject();
+                                foreach (ValueType val in tag.Values)
+                                {
+                                    writer.WriteStartObject();
+                                    writer.WriteString("Val", val.Val);
+                                    writer.WriteEndObject();
+                                }
                             }
+                            writer.WriteEndArray();
                         }
-                        writer.WriteEndArray();
+                        writer.WriteEndObject();
                     }
-                    writer.WriteEndObject();
                 }
+
+                writer.WriteEndArray();
             }
 
             writer.WriteStartObject();
             writer.WriteString("Name", type_def.Name.ToString());
             //attr tag list
             {
-                writer.WritePropertyName("Attributes");
-                writer.WriteStartArray();
-                if (type_def.HasAttributes())
-                {
-                    //attr tag
-                    WriteAttributeTagsList(type_def.Attributes);
-                }
-                writer.WriteEndArray();
+                WriteAttributeTagsList(type_def.Attributes);
             }
 
             //mem def list
@@ -246,14 +260,7 @@ namespace QuickScript.Exporters
                         writer.WriteString("Name", mem_def.Name.AsString());
                         writer.WriteString("TypeName", mem_def.TypeName.AsString());
                         writer.WriteString("Value", mem_def.HasValue() ? mem_def.Value : "");
-                        writer.WritePropertyName("Attributes");
-                        writer.WriteStartArray();
-                        if (type_def.HasAttributes())
-                        {
-                            //attr tag
-                            WriteAttributeTagsList(mem_def.Attributes);
-                        }
-                        writer.WriteEndArray();
+                        WriteAttributeTagsList(mem_def.Attributes);
                         writer.WriteEndObject();
                     }
                 }
@@ -296,7 +303,23 @@ namespace QuickScript.Exporters
                 JSonExportUtils.WriteAttributeDefinition(writer, attr_def, options);
             }
         }
+        public class TypeDefinitionConverter : JsonConverter<TypeDefinition>
+        {
+            public override TypeDefinition Read(ref Utf8JsonReader reader,
+                                            Type type,
+                                            JsonSerializerOptions options)
+            {
+                return JSonExportUtils.ReadTypeDefinition(ref reader, options);
+            }
 
+            public override void Write(
+                Utf8JsonWriter writer,
+                TypeDefinition type_def,
+                JsonSerializerOptions options)
+            {
+                JSonExportUtils.WriteTypeDefinition(writer, type_def, options);
+            }
+        }
         public class DataMapConverter : JsonConverter<DataMap>
         {
             public override DataMap Read(ref Utf8JsonReader reader,
@@ -372,6 +395,7 @@ namespace QuickScript.Exporters
             };
             options.Converters.Add(new HashStringConverter());
             options.Converters.Add(new AttributeDefinitionConverter());
+            options.Converters.Add(new TypeDefinitionConverter());
 
             return options;
         }
