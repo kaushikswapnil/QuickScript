@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -280,6 +281,87 @@ namespace QuickScript.Utils
             new_def.Members = members;
 
             return new_def;
+        }
+        public static List<AttributeDefinition> SupportedAttributeDefinitionList()
+        {
+            List<AttributeDefinition> retval = new List<AttributeDefinition>();
+
+            {
+                //Filepath
+                AttributeDefinition file_path = new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string"));
+                retval.Add(file_path);
+            }
+            {
+                //Alias
+                AttributeDefinition alias = new AttributeDefinition(new HashString("Alias"), 1, -1, new HashString("string"));
+                retval.Add(alias);
+            }
+            {
+                //DefaultValue
+                AttributeDefinition def_val = new AttributeDefinition(new HashString("DefaultValue"), 0, 1, new HashString("string"));
+                retval.Add(def_val);
+            }
+            {
+                //Precision
+                AttributeDefinition def_val = new AttributeDefinition(new HashString("Precision"), 0, 1, new HashString("int"));
+                retval.Add(def_val);
+            }
+
+            return retval;
+        }
+        public static List<TypeDefinition> SupportedBasicTypeDefinitionsList()
+        {
+            List<TypeDefinition> retval = new List<TypeDefinition>();
+            {
+                //bool
+                TypeDefinition boolean = new TypeDefinition
+                {
+                    Name = new HashString("bool"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("true") }) }
+                };
+                retval.Add(boolean);
+            }
+
+            {
+                //int
+                TypeDefinition integer = new TypeDefinition
+                {
+                    Name = new HashString("int"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("0") }) }
+                };
+                retval.Add(integer);
+            }
+
+            {
+                //char
+                TypeDefinition character = new TypeDefinition
+                {
+                    Name = new HashString("char"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType(" ") }) }
+                };
+                retval.Add(character);
+            }
+
+            {
+                //float
+                TypeDefinition floating = new TypeDefinition
+                {
+                    Name = new HashString("float"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("0.0") }) }
+                };
+                retval.Add(floating);
+            }
+
+            {
+                //string
+                TypeDefinition str = new TypeDefinition
+                {
+                    Name = new HashString("string"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("") }) }
+                };
+                retval.Add(str);
+            }
+            return retval;
         }
     }
 }

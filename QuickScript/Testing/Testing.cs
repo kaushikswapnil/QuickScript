@@ -77,6 +77,14 @@ namespace QuickScript.Testing
         }
     }
 
+    public class ValidateDataMap : Test
+    {
+        public ValidateDataMap(DataMap dm, bool log = true, uint indent = 0) : base(log, indent) 
+        { 
+            //dm.
+        }
+    }
+
     public class CreateAndSerializeTestDataMap : Test
     {
         public CreateAndSerializeTestDataMap(bool initial_basic = true, bool log = true, uint indent = 0) : base(log, indent)
