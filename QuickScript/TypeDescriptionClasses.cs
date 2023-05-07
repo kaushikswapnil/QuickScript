@@ -1,11 +1,15 @@
 ﻿using QuickScript.Utils;
+using System.Security.Cryptography.X509Certificates;
 
 namespace QuickScript
 {
     public class ValueType
     {
         public string Val;
-
+        public ValueType() 
+        {
+            Val = "";
+        }
         public ValueType(string val)
         {
             Val = val;
@@ -15,6 +19,20 @@ namespace QuickScript
         public static explicit operator ValueType(string val) => new ValueType(val);
 
         public string AsString() { return Val; }
+        public static bool operator ==(ValueType x, ValueType y)
+        {
+            return x.Val == y.Val;
+        }
+        public static bool operator !=(ValueType x, ValueType y)
+        {
+            return (x == y) == false;
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is ValueType))
+                return false;
+            return this == (ValueType)o;
+        }
     }
 
     public class AttributeDefinition
@@ -79,6 +97,35 @@ namespace QuickScript
             AttributeName = attr_name;
             Values = values;
         }
+        public static bool operator ==(AttributeTag x, AttributeTag y)
+        {
+            if (x.AttributeName != y.AttributeName ||
+                x.HasValues() != y.HasValues())
+            {
+                return false;
+            }
+
+            if (x.HasValues())
+            {
+                for (int tag_val_iter = 0; tag_val_iter < x.Values.Count; ++tag_val_iter)
+                {
+                    if (x.Values[tag_val_iter] != y.Values[tag_val_iter])
+                        return false;
+                }
+            }
+
+            return true;
+        }
+        public static bool operator !=(AttributeTag x, AttributeTag y)
+        {
+            return (x == y) == false;
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is AttributeTag))
+                return false;
+            return this == (AttributeTag)o;
+        }
     }
 
     public class AttributeInstanceDescription
@@ -107,29 +154,99 @@ namespace QuickScript
             public HashString Name { get; set;} = new HashString();
             public List<AttributeTag> Attributes { get; set; } = new List<AttributeTag>();
             public HashString TypeName { get; set; }
-            public ValueType? Value { get; set; }
+            public ValueType Value { get; set; } = new ValueType();
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
             public bool HasValue() { return Value != null; }
+            public static bool operator ==(MemberDefinition x, MemberDefinition y)
+            {
+                if (x.Name != y.Name ||
+                    x.TypeName != y.TypeName ||
+                    x.HasAttributes() != y.HasAttributes() ||
+                    x.HasValue() != y.HasValue())
+                {
+                    return false;
+                }
 
+                if (x.HasAttributes())
+                {
+                    for (int attr_tag_iter = 0; attr_tag_iter < x.Attributes.Count; ++attr_tag_iter)
+                    {
+                        if (x.Attributes[attr_tag_iter] != y.Attributes[attr_tag_iter])
+                            return false;
+                    }
+                }
+
+                if (x.HasValue() && x.Value != y.Value)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            public static bool operator !=(MemberDefinition x, MemberDefinition y)
+            {
+                return (x == y) == false;
+            }
+            public override bool Equals(object o)
+            {
+                if (!(o is MemberDefinition))
+                    return false;
+                return this == (MemberDefinition)o;
+            }
         }
         public HashString Name { get; set; }
         public List<MemberDefinition>? Members { get; set; }
         public bool HasMembers() { return Members != null && Members.Count > 0; }
         public List<AttributeTag>? Attributes { get; set; }
         public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
-        public ValueType? DefaultValue { get; set; }
 
         public TypeDefinition()
         {
             Name = new HashString();
             Members = null;
             Attributes = null;
-            DefaultValue= null;
         }
 
         public TypeDefinition(HashString name)
         {
             Name = name;
+        }
+        public static bool operator ==(TypeDefinition x, TypeDefinition y)
+        {
+            if (x.Name != y.Name ||
+                x.HasMembers() != y.HasMembers() ||
+                x.HasAttributes() != y.HasAttributes())
+            {
+                return false;
+            }
+            if (x.HasAttributes())
+            {
+                for (int attr_tag_iter = 0; attr_tag_iter < x.Attributes.Count; ++attr_tag_iter)
+                {
+                    if (x.Attributes[attr_tag_iter] != y.Attributes[attr_tag_iter])
+                        return false;
+                }
+            }
+            if (x.HasMembers())
+            {
+                for (int mem_iter = 0; mem_iter < x.Members.Count; ++mem_iter)
+                {
+                    if (x.Members[mem_iter] != y.Members[mem_iter])
+                        return false;
+                }
+            }
+
+            return true;
+        }
+        public static bool operator !=(TypeDefinition x, TypeDefinition y)
+        {
+            return (x == y) == false;
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is TypeDefinition))
+                return false;
+            return this == (TypeDefinition)o;
         }
     }
 
