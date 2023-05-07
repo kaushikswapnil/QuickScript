@@ -42,6 +42,20 @@ namespace QuickScript
             MinValueCount = MaxValueCount = value_count;
             ValueTypeName = valueTypeName;
         }
+        public static bool operator ==(AttributeDefinition x, AttributeDefinition y)
+        {
+            return x.Name == y.Name && x.MinValueCount == y.MinValueCount && x.MaxValueCount == y.MaxValueCount && x.ValueTypeName == y.ValueTypeName;
+        }
+        public static bool operator !=(AttributeDefinition x, AttributeDefinition y)
+        {
+            return x.Name != y.Name || x.MinValueCount != y.MinValueCount || x.MaxValueCount!= y.MaxValueCount || x.ValueTypeName != y.ValueTypeName;
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is AttributeDefinition))
+                return false;
+            return this == (AttributeDefinition)o;
+        }
     }
 
     public class AttributeTag
@@ -58,6 +72,11 @@ namespace QuickScript
         public AttributeTag(AttributeDefinition attr_def, in List<ValueType> values)
         {
             AttributeName = attr_def.Name;
+            Values = values;
+        }
+        public AttributeTag(HashString attr_name, in List<ValueType> values)
+        {
+            AttributeName = attr_name;
             Values = values;
         }
     }
@@ -99,6 +118,14 @@ namespace QuickScript
         public List<AttributeTag>? Attributes { get; set; }
         public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
         public ValueType? DefaultValue { get; set; }
+
+        public TypeDefinition()
+        {
+            Name = new HashString();
+            Members = null;
+            Attributes = null;
+            DefaultValue= null;
+        }
 
         public TypeDefinition(HashString name)
         {

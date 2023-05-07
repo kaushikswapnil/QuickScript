@@ -96,13 +96,169 @@ namespace QuickScript.Exporters
 
             writer.WriteEndObject();
         }
+        static public TypeDefinition ReadTypeDefinition(ref Utf8JsonReader reader,
+                            JsonSerializerOptions options)
+        {
+            List<AttributeTag> ReadAttributeTags(ref Utf8JsonReader reader)
+            {
+                List<AttributeTag> retval = new List<AttributeTag>();
+                
+                Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                bool read = reader.Read();
+                Assertion.Assert(reader.TokenType == JsonTokenType.StartArray, "Error reading TypeDefinition object");
+                read = reader.Read();
+                while (reader.TokenType != JsonTokenType.EndArray)
+                {
+                    Assertion.Assert(read, "Error reading TypeDefinition object");
+                    Assertion.Assert(reader.TokenType == JsonTokenType.StartObject, "Error reading TypeDefinition object");
+                    read = reader.Read();
+                    Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                    read = reader.Read();
+                    string str = reader.GetString();
+                    HashString attr_tag_name = new HashString(str);
+
+                    Assertion.Assert(reader.TokenType == JsonTokenType.StartArray, "Error reading TypeDefinition object");
+                    read = reader.Read();
+                    List<ValueType> attr_vals = new List<ValueType>();
+                    while (reader.TokenType != JsonTokenType.EndArray)
+                    {
+                        Assertion.Assert(read, "Error reading TypeDefinition object");
+                        Assertion.Assert(reader.TokenType == JsonTokenType.StartObject, "Error reading TypeDefinition object");
+                        read = reader.Read();
+                        Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                        read = reader.Read();
+                        str = reader.GetString();
+                        attr_vals.Add(new ValueType(str));
+                        read = reader.Read();
+                        Assertion.Assert(read, "Error reading TypeDefinition object");
+                        Assertion.Assert(reader.TokenType == JsonTokenType.EndObject, "Error reading TypeDefinition object");
+                        read = reader.Read();
+                    }
+
+                    retval.Add(new AttributeTag(attr_tag_name, attr_vals.Count > 0 ? attr_vals : null));
+                }
+
+                return retval.Count > 0 ? retval : null;
+            }
+
+            Assertion.Assert(reader.TokenType == JsonTokenType.StartObject, "TypeDefinition should start with a start object");
+
+            bool read = reader.Read();
+            Assertion.Assert(read, "Error reading TypeDefinition object");
+            Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+            read = reader.Read();
+            string str = reader.GetString();
+            HashString type_def_name = new HashString(str);
+
+            List<AttributeTag> type_attributes = ReadAttributeTags(ref reader);
+
+            read = reader.Read();
+            Assertion.Assert(read, "Error reading TypeDefinition object");
+            Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+
+            read = reader.Read();
+            Assertion.Assert(reader.TokenType == JsonTokenType.StartArray, "Error reading TypeDefinition object");
+            List<TypeDefinition.MemberDefinition> mem_defs = new List<TypeDefinition.MemberDefinition>();
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                read = reader.Read();
+                Assertion.Assert(reader.TokenType == JsonTokenType.StartObject, "Error reading TypeDefinition object");
+                read = reader.Read();
+                Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                read = reader.Read();
+                Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
+                str = reader.GetString();
+                HashString mem_name = new HashString(str);
+                Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                read = reader.Read();
+                Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
+                str = reader.GetString();
+                HashString mem_type_name = new HashString(str);
+                Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
+                read = reader.Read();
+                Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
+                str = reader.GetString();
+                ValueType mem_val = str == "" ? new ValueType(str) : null;
+                List<AttributeTag> mem_attributes = ReadAttributeTags(ref reader);
+                read = reader.Read();
+
+                mem_defs.Add(new TypeDefinition.MemberDefinition { Name = mem_name, TypeName = mem_type_name, Attributes = mem_attributes, Value = mem_val });
+            }
+
+            read = reader.Read();
+            Assertion.Assert(read, "Error reading TypeDefinition object");
+            Assertion.Assert(reader.TokenType == JsonTokenType.EndObject, "Error reading TypeDefinition object");
+
+            return new TypeDefinition { Name = type_def_name, Attributes = type_attributes, Members = mem_defs.Count > 0 ? mem_defs : null };
+        }
         static public void WriteTypeDefinition(
                 Utf8JsonWriter writer,
                 TypeDefinition type_def,
                 JsonSerializerOptions options)
         {
-            writer.WriteStartObject();
+            void WriteAttributeTagsList(List<AttributeTag> attr_list)
+            {
+                foreach (AttributeTag tag in attr_list)
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("AttributeName", tag.AttributeName.AsString());
+                    {
+                        writer.WriteStartArray();
+                        if (tag.HasValues())
+                        {
+                            foreach (ValueType val in tag.Values)
+                            {
+                                writer.WriteStartObject();
+                                writer.WriteString("Val", val.Val);
+                                writer.WriteEndObject();
+                            }
+                        }
+                        writer.WriteEndArray();
+                    }
+                    writer.WriteEndObject();
+                }
+            }
 
+            writer.WriteStartObject();
+            writer.WriteString("Name", type_def.Name.ToString());
+            //attr tag list
+            {
+                writer.WritePropertyName("Attributes");
+                writer.WriteStartArray();
+                if (type_def.HasAttributes())
+                {
+                    //attr tag
+                    WriteAttributeTagsList(type_def.Attributes);
+                }
+                writer.WriteEndArray();
+            }
+
+            //mem def list
+            {
+                writer.WritePropertyName("Members");
+                writer.WriteStartArray();
+                //mem def
+                if (type_def.HasMembers())
+                {
+                    foreach (TypeDefinition.MemberDefinition mem_def in type_def.Members)
+                    {
+                        writer.WriteStartObject();
+                        writer.WriteString("Name", mem_def.Name.AsString());
+                        writer.WriteString("TypeName", mem_def.TypeName.AsString());
+                        writer.WriteString("Value", mem_def.HasValue() ? mem_def.Value : "");
+                        writer.WritePropertyName("Attributes");
+                        writer.WriteStartArray();
+                        if (type_def.HasAttributes())
+                        {
+                            //attr tag
+                            WriteAttributeTagsList(mem_def.Attributes);
+                        }
+                        writer.WriteEndArray();
+                        writer.WriteEndObject();
+                    }
+                }
+                writer.WriteEndArray();
+            }
             writer.WriteEndObject();
         }
 
