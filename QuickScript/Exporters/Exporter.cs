@@ -14,7 +14,17 @@ namespace QuickScript.Exporters
 {
     public class ExportSettings
     {
+        public string InputDirectory = QuickscriptSettings.DEFAULT_INPUT_TEST_DIRECTORY;
+        public string OutputDirectory = QuickscriptSettings.DEFAULT_OUTPUT_TEST_DIRECTORY;
 
+        [Flags]
+        public enum ESettingFlags : uint
+        {
+            Default = 0,
+            WriteToConsole = 1 << 0,
+            WriteToOutputDirectory = 1 << 1,
+        }
+        public ESettingFlags SettingFlags = (ESettingFlags.WriteToOutputDirectory) | (ESettingFlags.WriteToConsole);
     }
 
     public interface IExporter

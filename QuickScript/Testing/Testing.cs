@@ -198,6 +198,20 @@ namespace QuickScript.Testing
         }
     }
 
+    public class JsonExporterTest : Test
+    {
+        public JsonExporterTest(bool log = true, uint indent = 0) : base(log, indent, typeof(JsonExporterTest).Name)
+        {
+            LogTestBeginIfAllowed();
+
+            DataMap dm = DataMap.ConstructDataMap(QuickscriptSettings.DEFAULT_DATA_MAP_PATH);
+            JSonExporter exporter = new JSonExporter();
+            exporter.Export(new ExportSettings(), dm);
+
+            LogTestEndIfAllowed();
+        }
+    }
+
     public class TestsSuite : Test
     {
         public TestsSuite(bool log = true, uint indent = 0) : base(log, indent)
@@ -205,6 +219,7 @@ namespace QuickScript.Testing
             JsonSerializationTests test_json = new JsonSerializationTests(log, indent);
             CreateAndSerializeTestDataMap test_dm_create = new CreateAndSerializeTestDataMap(true, log, indent);
             ValidateDataMap test_dm_val = new ValidateDataMap(GetTestDataMap(), log, indent);
+            JsonExporterTest test_json_export = new JsonExporterTest();
         }
     }
 }

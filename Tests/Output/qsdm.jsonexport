@@ -1,0 +1,226 @@
+{
+  "AttributeDefinitions": [
+    {
+      "Name": "FilePath",
+      "MinValueCount": 1,
+      "MaxValueCount": 1,
+      "ValueTypeName": "string"
+    },
+    {
+      "Name": "Alias",
+      "MinValueCount": 1,
+      "MaxValueCount": -1,
+      "ValueTypeName": "string"
+    },
+    {
+      "Name": "DefaultValue",
+      "MinValueCount": 0,
+      "MaxValueCount": 1,
+      "ValueTypeName": "string"
+    },
+    {
+      "Name": "Precision",
+      "MinValueCount": 0,
+      "MaxValueCount": 1,
+      "ValueTypeName": "int"
+    }
+  ],
+  "TypeDefinitions": [
+    {
+      "Name": "bool",
+      "Attributes": [
+        {
+          "AttributeName": "DefaultValue",
+          "Values": [
+            {
+              "Val": "true"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "int",
+      "Attributes": [
+        {
+          "AttributeName": "DefaultValue",
+          "Values": [
+            {
+              "Val": "0"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "char",
+      "Attributes": [
+        {
+          "AttributeName": "DefaultValue",
+          "Values": [
+            {
+              "Val": " "
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "float",
+      "Attributes": [
+        {
+          "AttributeName": "DefaultValue",
+          "Values": [
+            {
+              "Val": "0.0"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "string",
+      "Attributes": [
+        {
+          "AttributeName": "DefaultValue",
+          "Values": [
+            {
+              "Val": ""
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "App",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\App.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "Damage_Modifier",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirA\\Damage_Modifiers.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "ExtraDamage",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirA\\Damage_Modifiers.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "Armor",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirA\\Damage_Modifiers.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "Object",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirB\\Object.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "PositionalObject",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirB\\Object.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "Fire",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirB\\Object.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "Tile",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirB\\Tile.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    },
+    {
+      "Name": "Stack",
+      "Attributes": [
+        {
+          "AttributeName": "FilePath",
+          "Values": [
+            {
+              "Val": "D:\\PersonalProjects\\QuickScript\\Tests\\Input\\DirB\\DirA\\Stack.qs"
+            }
+          ]
+        }
+      ],
+      "Members": []
+    }
+  ]
+}

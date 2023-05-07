@@ -444,7 +444,16 @@ namespace QuickScript.Exporters
 
         public void Export(in ExportSettings settings, in DataMap dm)
         {
-            Console.WriteLine(Export(dm));
+            string export = Export(dm);
+
+            if (settings.SettingFlags.HasFlag(ExportSettings.ESettingFlags.WriteToConsole))
+            {
+                Console.WriteLine(export);
+            }
+            if (settings.SettingFlags.HasFlag(ExportSettings.ESettingFlags.WriteToOutputDirectory))
+            {
+                File.WriteAllText(settings.OutputDirectory + "\\qsdm.jsonexport", export);
+            }
         }
     }
 }
