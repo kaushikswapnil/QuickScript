@@ -150,6 +150,23 @@ namespace QuickScript
             }
         }
 
+        public static bool operator ==(DataMap x, DataMap y)
+        {
+            return x.AttributeDefinitions.SequenceEqual(y.AttributeDefinitions) &&
+                   x.TypeDefinitions.SequenceEqual(y.TypeDefinitions);
+        }
+        public static bool operator !=(DataMap x, DataMap y)
+        {
+            return (x.AttributeDefinitions.SequenceEqual(y.AttributeDefinitions) == false) ||
+                   (x.TypeDefinitions.SequenceEqual(y.TypeDefinitions) == false);
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is DataMap))
+                return false;
+            return this == (DataMap)o;
+        }
+
         public TypeDefinition? GetTypeDefinitionByName(HashString name)
         {
             return TypeDefinitions.Find(x => x.Name == name);
