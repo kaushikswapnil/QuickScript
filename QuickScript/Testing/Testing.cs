@@ -56,7 +56,9 @@ namespace QuickScript.Testing
                 T deserialized = JsonSerializer.Deserialize<T>(export, options);
                 LogIfAllowed("\nDeserialized as " + deserialized);
 
-                Assertion.SoftAssert(deserialized.Equals(test_item), "Serialization and deserialization should result in same object");
+                bool passed = deserialized.Equals(test_item);
+                LogIfAllowed("\nTest " + i + (passed ? " PASSED" : " FAILED"));
+                Assertion.SoftAssert(passed, "Serialization and deserialization should result in same object");
             }
 
             LogIfAllowed("-----JSON Serialization Test : " + typeof(T).FullName + " End-----\n");
@@ -96,7 +98,9 @@ namespace QuickScript.Testing
             DataMap new_dm = DataMap.ConstructDataMap(settings.DataMapPath);
 
             LogIfAllowed("Constructed new dm as " + new_dm);
-            Assertion.SoftAssert(dm == new_dm, "Construction from disk should result in same DM!");
+            bool passed = dm.Equals(new_dm);
+            LogIfAllowed("\nTest " + (passed ? "PASSED" : "FAILED"));
+            Assertion.SoftAssert(passed, "Construction from disk should result in same DM!");
 
             LogIfAllowed("-----CreateAndSerializeTestDataMap Test : End-----\n");
         }

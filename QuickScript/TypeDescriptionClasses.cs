@@ -113,10 +113,9 @@ namespace QuickScript
 
             if (x.HasValues())
             {
-                for (int tag_val_iter = 0; tag_val_iter < x.Values.Count; ++tag_val_iter)
+                if (x.Values.SequenceEqual(y.Values) == false)
                 {
-                    if (x.Values[tag_val_iter] != y.Values[tag_val_iter])
-                        return false;
+                    return false;
                 }
             }
 
