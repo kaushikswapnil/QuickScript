@@ -18,15 +18,15 @@ namespace QuickScript.Exporters
         }
         public abstract class IOutputSection
         {
-            protected OutputFile Parent;
+            protected IOutputFile Parent;
             protected List<IOutputSectionProperty> Children;
 
-            public IOutputSection(ref OutputFile parent)
+            public IOutputSection(ref IOutputFile parent)
             {
                 Parent = parent;
                 Children = null;
             }
-            public IOutputSection(ref OutputFile parent, List<IOutputSectionProperty> childen) 
+            public IOutputSection(ref IOutputFile parent, List<IOutputSectionProperty> childen) 
             {
                 Parent = parent;
                 Children = childen;
@@ -49,13 +49,13 @@ namespace QuickScript.Exporters
                     return "#include<" + RefPath + ".h>\n";
                 }
             }
-            private List<IOutputSectionProperty> CreateReferencePropertiesList(OutputFile parent)
+            private List<IOutputSectionProperty> CreateReferencePropertiesList(IOutputFile parent)
             {
                 List<IOutputSectionProperty> retval = new List<IOutputSectionProperty>();
 
                 return retval;
             }
-            public ReferenceOutputSection(ref OutputFile parent) : base(ref parent)
+            public ReferenceOutputSection(ref IOutputFile parent) : base(ref parent)
             {
                 Children = CreateReferencePropertiesList(parent);
             }
@@ -70,9 +70,47 @@ namespace QuickScript.Exporters
                 return retval;
             }
         }
-        public class OutputFile
+        public abstract class IOutputFile
         {
-            public OutputFile() { }
+            protected OutputUnit Parent;
+            public IOutputFile(OutputUnit parent) { Parent = parent; }
+            public virtual string FileOutput() { return ""; }
+            public abstract void WriteFile();
+        }
+
+        public class OutputHeaderFile : IOutputFile
+        {
+            public OutputHeaderFile(OutputUnit parent) : base(parent) { }
+            public override string FileOutput()
+            {
+                return base.FileOutput();
+            }
+            public override void WriteFile()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class OutputCppFile : IOutputFile
+        {
+            public OutputCppFile(OutputUnit parent) : base(parent) { }
+            public override string FileOutput()
+            {
+                return base.FileOutput();
+            }
+            public override void WriteFile()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class OutputUnit
+        {
+            public List<TypeDefinition> TypeDefinitionsInFile { get; set; }
+            public OutputHeaderFile HeaderFile;
+            public OutputCppFile CppFile;
+            public HashString FullName; //Is with full output path
+            public OutputUnit(List<TypeDefinition> type_def_list) { TypeDefinitionsInFile = type_def_list; }
         }
 
         public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
