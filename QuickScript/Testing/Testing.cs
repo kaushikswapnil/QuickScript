@@ -12,50 +12,57 @@ namespace QuickScript.Testing
 {
     public class JsonSerializationTest<T>
     {
-        public JsonSerializationTest(List<T> test_items_list)
+        public JsonSerializationTest(List<T> test_items_list, bool log = true)
         {
-            RunTests(test_items_list);
+            RunTests(test_items_list, log);
         }
 
-        public JsonSerializationTest(T test_item)
+        public JsonSerializationTest(T test_item, bool log = true)
         {
-            RunTests(new List<T> { test_item });
+            RunTests(new List<T> { test_item }, log);
         }
 
-        private void RunTests(List<T> test_items_list)
+        private void RunTests(List<T> test_items_list, bool log = true)
         {
-            Console.WriteLine("-----JSON Serialization Test : " + typeof(T).FullName + " Beginning-----\n");
+            void LogIfAllowed(string message)
+            {
+                if (log)
+                {
+                    Console.WriteLine(message);
+                }
+            }
+            LogIfAllowed("-----JSON Serialization Test : " + typeof(T).FullName + " Beginning-----\n");
 
             for (int i = 0; i < test_items_list.Count; ++i)
             {
                 T test_item = test_items_list[i];
-                Console.WriteLine("Test #" + i + "\n");
+                LogIfAllowed("Test #" + i + "\n");
 
-                Console.WriteLine("Serializing object " + test_item);
+                LogIfAllowed("Serializing object " + test_item);
 
                 var options = JSonExportUtils.GetSerializationOptions();
                 string export = JsonSerializer.Serialize<T>(test_item, options);
-                Console.WriteLine("\nExporting as " + export);
+                LogIfAllowed("\nExporting as " + export);
 
                 T deserialized = JsonSerializer.Deserialize<T>(export, options);
-                Console.WriteLine("\nDeserialized as " + deserialized);
+                LogIfAllowed("\nDeserialized as " + deserialized);
 
                 Assertion.SoftAssert(deserialized.Equals(test_item), "Serialization and deserialization should result in same object");
             }
 
-            Console.WriteLine("-----JSON Serialization Test : " + typeof(T).FullName + " End-----\n");
+            LogIfAllowed("-----JSON Serialization Test : " + typeof(T).FullName + " End-----\n");
         }
     }
     public class JsonSerializationTests
     {
-        public JsonSerializationTests()
+        public JsonSerializationTests(bool log = true)
         {
             JsonSerializationTest<HashString> test_hs = 
-                new JsonSerializationTest<HashString>(new List<HashString>{ new HashString("HelloWorld") });
+                new JsonSerializationTest<HashString>(new List<HashString>{ new HashString("HelloWorld") }, log);
             JsonSerializationTest<AttributeDefinition> test_ad = 
-                new JsonSerializationTest<AttributeDefinition>(new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string")));
-            JsonSerializationTest<TypeDefinition> test_td = new JsonSerializationTest<TypeDefinition>(new TypeDefinition(new HashString("int")));
-            JsonSerializationTest<DataMap> test_dm = new JsonSerializationTest<DataMap>(new DataMap());
+                new JsonSerializationTest<AttributeDefinition>(new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string")), log);
+            JsonSerializationTest<TypeDefinition> test_td = new JsonSerializationTest<TypeDefinition>(new TypeDefinition(new HashString("int")), log);
+            JsonSerializationTest<DataMap> test_dm = new JsonSerializationTest<DataMap>(new DataMap(), log);
         }
     }
 }
