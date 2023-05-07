@@ -22,10 +22,25 @@ namespace QuickScript.Utils
             [CallerFilePath] string filePath = "",
             [CallerLineNumber] int lineNumber = 0) where T : Exception
         {
-            if (condition == false)
+            try
             {
-                Logging.Log("[ERROR][" + filePath + ":" + lineNumber + "]" + message, "", 0);
-                throw Activator.CreateInstance(typeof(T), message) as T;
+                if (condition == false)
+                {
+                    Logging.Log("[ERROR][" + filePath + ":" + lineNumber + "]" + message, "", 0);
+                    throw Activator.CreateInstance(typeof(T), message) as T;
+                }
+            }
+            catch
+            {
+                bool always_safe = true;
+                if (always_safe == true && Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
