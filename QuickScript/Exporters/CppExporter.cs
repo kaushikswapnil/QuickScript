@@ -73,18 +73,23 @@ namespace QuickScript.Exporters
         public abstract class IOutputFile
         {
             protected OutputUnit Parent;
+            protected List<IOutputSection> Children;
             public IOutputFile(OutputUnit parent) { Parent = parent; }
-            public virtual string FileOutput() { return ""; }
+            public virtual string FileOutput() 
+            {
+                string retval = "";
+                foreach (IOutputSection sec in Children)
+                {
+                    retval += sec.SectionStringOutput();
+                }
+                return retval;
+            }
             public abstract void WriteFile();
         }
 
         public class OutputHeaderFile : IOutputFile
         {
             public OutputHeaderFile(OutputUnit parent) : base(parent) { }
-            public override string FileOutput()
-            {
-                return base.FileOutput();
-            }
             public override void WriteFile()
             {
                 throw new NotImplementedException();
@@ -94,10 +99,6 @@ namespace QuickScript.Exporters
         public class OutputCppFile : IOutputFile
         {
             public OutputCppFile(OutputUnit parent) : base(parent) { }
-            public override string FileOutput()
-            {
-                return base.FileOutput();
-            }
             public override void WriteFile()
             {
                 throw new NotImplementedException();
