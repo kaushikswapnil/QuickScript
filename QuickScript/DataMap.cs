@@ -26,35 +26,43 @@ namespace QuickScript
             ConstructBaseMap();
         }
 
-        public static DataMap ConstructDataMap(in string existing_map_file_path = "")
+        public static DataMap ConstructDataMap(in string existing_map_file_path = "", bool force_recreate_base = false)
         {
             DataMap retval = null;
-            try
+            if (force_recreate_base == false)
             {
-                if (existing_map_file_path.Length > 0)
+                try
                 {
-                    if (File.Exists(existing_map_file_path))
+                    if (existing_map_file_path.Length > 0)
                     {
-                        DataMap deserialized = JsonSerializer.Deserialize<DataMap>(File.ReadAllText(existing_map_file_path), JSonExportUtils.GetSerializationOptions());
-                        if (deserialized != null)
+                        if (File.Exists(existing_map_file_path))
                         {
-                            retval = deserialized;
+                            DataMap deserialized = JsonSerializer.Deserialize<DataMap>(File.ReadAllText(existing_map_file_path), JSonExportUtils.GetSerializationOptions());
+                            if (deserialized != null)
+                            {
+                                retval = deserialized;
+                            }
+                        }
+                        else
+                        {
+                            throw new FileNotFoundException(existing_map_file_path);
                         }
                     }
                     else
                     {
-                        throw new FileNotFoundException(existing_map_file_path);
+                        throw new ArgumentNullException("Empty data map file path");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw new ArgumentNullException("Empty data map file path");
+                    Assertion.Warn("Unable to create datamap from existing file!");
+                    Assertion.SoftAssert(false, ex.Message);
+                    retval = new DataMap(new List<AttributeDefinition>(), new List<TypeDefinition>());
+                    retval.ConstructBaseMap();
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Assertion.Warn("Unable to create datamap from existing file!");
-                Assertion.SoftAssert(false, ex.Message);
                 retval = new DataMap(new List<AttributeDefinition>(), new List<TypeDefinition>());
                 retval.ConstructBaseMap();
             }
@@ -150,21 +158,20 @@ namespace QuickScript
             }
         }
 
-        public static bool operator ==(DataMap x, DataMap y)
+        public override int GetHashCode()
         {
-            return x.AttributeDefinitions.SequenceEqual(y.AttributeDefinitions) &&
-                   x.TypeDefinitions.SequenceEqual(y.TypeDefinitions);
-        }
-        public static bool operator !=(DataMap x, DataMap y)
-        {
-            return (x.AttributeDefinitions.SequenceEqual(y.AttributeDefinitions) == false) ||
-                   (x.TypeDefinitions.SequenceEqual(y.TypeDefinitions) == false);
+            return AttributeDefinitions.GetHashCode() ^ TypeDefinitions.GetHashCode();
         }
         public override bool Equals(object o)
         {
             if (!(o is DataMap))
                 return false;
-            return this == (DataMap)o;
+            
+            DataMap x = (DataMap)o;
+            DataMap y = this;
+
+            return x.AttributeDefinitions.SequenceEqual(y.AttributeDefinitions) &&
+                   x.TypeDefinitions.SequenceEqual(y.TypeDefinitions);
         }
 
         public TypeDefinition? GetTypeDefinitionByName(HashString name)

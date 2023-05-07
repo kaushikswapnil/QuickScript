@@ -19,19 +19,15 @@ namespace QuickScript
         public static explicit operator ValueType(string val) => new ValueType(val);
 
         public string AsString() { return Val; }
-        public static bool operator ==(ValueType x, ValueType y)
+        public override int GetHashCode()
         {
-            return x.Val == y.Val;
-        }
-        public static bool operator !=(ValueType x, ValueType y)
-        {
-            return (x == y) == false;
+            return Val.GetHashCode();
         }
         public override bool Equals(object o)
         {
             if (!(o is ValueType))
                 return false;
-            return this == (ValueType)o;
+            return this.Val == ((ValueType)o).Val;
         }
     }
 
@@ -60,19 +56,20 @@ namespace QuickScript
             MinValueCount = MaxValueCount = value_count;
             ValueTypeName = valueTypeName;
         }
-        public static bool operator ==(AttributeDefinition x, AttributeDefinition y)
+
+        public override int GetHashCode()
         {
-            return x.Name == y.Name && x.MinValueCount == y.MinValueCount && x.MaxValueCount == y.MaxValueCount && x.ValueTypeName == y.ValueTypeName;
+            return Name.GetHashCode() ^ MinValueCount.GetHashCode() ^ MaxValueCount.GetHashCode(); 
         }
-        public static bool operator !=(AttributeDefinition x, AttributeDefinition y)
-        {
-            return x.Name != y.Name || x.MinValueCount != y.MinValueCount || x.MaxValueCount!= y.MaxValueCount || x.ValueTypeName != y.ValueTypeName;
-        }
+
         public override bool Equals(object o)
         {
             if (!(o is AttributeDefinition))
                 return false;
-            return this == (AttributeDefinition)o;
+
+            AttributeDefinition x = this;
+            AttributeDefinition y = (AttributeDefinition)o;
+            return x.Name == y.Name && x.MinValueCount == y.MinValueCount && x.MaxValueCount == y.MaxValueCount && x.ValueTypeName == y.ValueTypeName;
         }
     }
 
@@ -97,10 +94,19 @@ namespace QuickScript
             AttributeName = attr_name;
             Values = values;
         }
-        public static bool operator ==(AttributeTag x, AttributeTag y)
+        public override int GetHashCode()
         {
+            int retval = AttributeName.GetHashCode();
+            return retval;
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is AttributeTag))
+                return false;
+            AttributeTag y = (AttributeTag)o;
+            AttributeTag x = this;
             if (x.AttributeName != y.AttributeName ||
-                x.HasValues() != y.HasValues())
+                    x.HasValues() != y.HasValues())
             {
                 return false;
             }
@@ -115,16 +121,6 @@ namespace QuickScript
             }
 
             return true;
-        }
-        public static bool operator !=(AttributeTag x, AttributeTag y)
-        {
-            return (x == y) == false;
-        }
-        public override bool Equals(object o)
-        {
-            if (!(o is AttributeTag))
-                return false;
-            return this == (AttributeTag)o;
         }
     }
 
@@ -157,8 +153,18 @@ namespace QuickScript
             public ValueType Value { get; set; } = new ValueType();
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
             public bool HasValue() { return Value != null; }
-            public static bool operator ==(MemberDefinition x, MemberDefinition y)
+            public override int GetHashCode()
             {
+                return Name.GetHashCode() ^ TypeName.GetHashCode() ^ Value.GetHashCode();
+            }
+            public override bool Equals(object o)
+            {
+                if (!(o is MemberDefinition))
+                    return false;
+
+                MemberDefinition x = (MemberDefinition)o;
+                MemberDefinition y = this;
+
                 if (x.Name != y.Name ||
                     x.TypeName != y.TypeName ||
                     x.HasAttributes() != y.HasAttributes() ||
@@ -183,16 +189,6 @@ namespace QuickScript
 
                 return true;
             }
-            public static bool operator !=(MemberDefinition x, MemberDefinition y)
-            {
-                return (x == y) == false;
-            }
-            public override bool Equals(object o)
-            {
-                if (!(o is MemberDefinition))
-                    return false;
-                return this == (MemberDefinition)o;
-            }
         }
         public HashString Name { get; set; }
         public List<MemberDefinition>? Members { get; set; }
@@ -211,8 +207,18 @@ namespace QuickScript
         {
             Name = name;
         }
-        public static bool operator ==(TypeDefinition x, TypeDefinition y)
+        public override int GetHashCode()
         {
+            return Name.GetHashCode();
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is TypeDefinition))
+                return false;
+
+            TypeDefinition x = (TypeDefinition)o;
+            TypeDefinition y = this;
+
             if (x.Name != y.Name ||
                 x.HasMembers() != y.HasMembers() ||
                 x.HasAttributes() != y.HasAttributes())
@@ -221,32 +227,20 @@ namespace QuickScript
             }
             if (x.HasAttributes())
             {
-                for (int attr_tag_iter = 0; attr_tag_iter < x.Attributes.Count; ++attr_tag_iter)
+                if (x.Attributes.SequenceEqual(y.Attributes) == false)
                 {
-                    if (x.Attributes[attr_tag_iter] != y.Attributes[attr_tag_iter])
-                        return false;
+                    return false;
                 }
             }
             if (x.HasMembers())
             {
-                for (int mem_iter = 0; mem_iter < x.Members.Count; ++mem_iter)
+                if (x.Members.SequenceEqual(y.Members) == false)
                 {
-                    if (x.Members[mem_iter] != y.Members[mem_iter])
-                        return false;
+                    return false;
                 }
             }
 
             return true;
-        }
-        public static bool operator !=(TypeDefinition x, TypeDefinition y)
-        {
-            return (x == y) == false;
-        }
-        public override bool Equals(object o)
-        {
-            if (!(o is TypeDefinition))
-                return false;
-            return this == (TypeDefinition)o;
         }
     }
 

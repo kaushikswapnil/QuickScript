@@ -10,27 +10,36 @@ using System.Threading.Tasks;
 
 namespace QuickScript.Testing
 {
-    public class JsonSerializationTest<T>
-    {
-        public JsonSerializationTest(List<T> test_items_list, bool log = true)
+    public abstract class Test
+    { 
+        protected bool Log { get; set; }
+        protected uint Indent { get; set; }
+        protected void LogIfAllowed(string message)
         {
-            RunTests(test_items_list, log);
-        }
-
-        public JsonSerializationTest(T test_item, bool log = true)
-        {
-            RunTests(new List<T> { test_item }, log);
-        }
-
-        private void RunTests(List<T> test_items_list, bool log = true)
-        {
-            void LogIfAllowed(string message)
+            if (Log)
             {
-                if (log)
-                {
-                    Console.WriteLine(message);
-                }
+                const uint IndentSize = 2;
+                string final_message = new string(' ', (int)(Indent * IndentSize)) + message;
+                Console.WriteLine(message);
             }
+        }
+
+        public Test(bool log= true, uint indent = 0) {  Log = log; Indent = indent; }
+    }
+    public class JsonSerializationTest<T> : Test
+    {
+        public JsonSerializationTest(List<T> test_items_list, bool log = true, uint indent = 0) : base(log, indent)
+        {
+            RunTests(test_items_list);
+        }
+
+        public JsonSerializationTest(T test_item, bool log = true, uint indent = 0) : base(log, indent)
+        {
+            RunTests(new List<T> { test_item });
+        }
+
+        private void RunTests(List<T> test_items_list)
+        {
             LogIfAllowed("-----JSON Serialization Test : " + typeof(T).FullName + " Beginning-----\n");
 
             for (int i = 0; i < test_items_list.Count; ++i)
@@ -53,16 +62,52 @@ namespace QuickScript.Testing
             LogIfAllowed("-----JSON Serialization Test : " + typeof(T).FullName + " End-----\n");
         }
     }
-    public class JsonSerializationTests
+    public class JsonSerializationTests : Test
     {
-        public JsonSerializationTests(bool log = true)
+        public JsonSerializationTests(bool log = true, uint indent = 0) : base(log, indent)
         {
-            JsonSerializationTest<HashString> test_hs = 
-                new JsonSerializationTest<HashString>(new List<HashString>{ new HashString("HelloWorld") }, log);
-            JsonSerializationTest<AttributeDefinition> test_ad = 
+            JsonSerializationTest<HashString> test_hs =
+                new JsonSerializationTest<HashString>(new List<HashString> { new HashString("HelloWorld") }, log);
+            JsonSerializationTest<AttributeDefinition> test_ad =
                 new JsonSerializationTest<AttributeDefinition>(new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string")), log);
             JsonSerializationTest<TypeDefinition> test_td = new JsonSerializationTest<TypeDefinition>(new TypeDefinition(new HashString("int")), log);
             JsonSerializationTest<DataMap> test_dm = new JsonSerializationTest<DataMap>(new DataMap(), log);
+        }
+    }
+
+    public class CreateAndSerializeTestDataMap : Test
+    {
+        public CreateAndSerializeTestDataMap(bool initial_basic = true, bool log = true, uint indent = 0) : base(log, indent)
+        {
+            LogIfAllowed("-----CreateAndSerializeTestDataMap Test : Beginning-----\n");
+            QuickscriptSettings settings = new QuickscriptSettings();
+
+            DataMap dm = DataMap.ConstructDataMap(settings.DataMapPath, initial_basic);
+            dm.AssimilateTypeInstanceDescriptions(Parser.ParseDirectory(settings.QuickScriptsDirectory));
+
+            LogIfAllowed("Constructed datamap as " + dm);
+
+            LogIfAllowed("Attempting dm serialization");
+            JsonSerializationTest<DataMap> test_dm = new JsonSerializationTest<DataMap>(dm, log, ++indent);
+            LogIfAllowed("Saving to dm");
+            dm.SaveToDisk(settings.DataMapPath);
+
+            LogIfAllowed("Attempting reconstruction from disk save path " + settings.DataMapPath);
+            DataMap new_dm = DataMap.ConstructDataMap(settings.DataMapPath);
+
+            LogIfAllowed("Constructed new dm as " + new_dm);
+            Assertion.SoftAssert(dm == new_dm, "Construction from disk should result in same DM!");
+
+            LogIfAllowed("-----CreateAndSerializeTestDataMap Test : End-----\n");
+        }
+    }
+
+    public class TestsSuite : Test
+    {
+        public TestsSuite(bool log = true, uint indent = 0) : base(log, indent)
+        { 
+            JsonSerializationTests test_json = new JsonSerializationTests(log, indent);
+            CreateAndSerializeTestDataMap test_dm_create = new CreateAndSerializeTestDataMap(true, log, indent);
         }
     }
 }
