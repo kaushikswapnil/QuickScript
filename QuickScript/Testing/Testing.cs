@@ -34,6 +34,7 @@ namespace QuickScript.Testing
             JsonSerializationTest<HashString> test_hs = new JsonSerializationTest<HashString>(new HashString("HelloWorld"));
             JsonSerializationTest<AttributeDefinition> test_ad = new JsonSerializationTest<AttributeDefinition>(new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string")));
             JsonSerializationTest<TypeDefinition> test_td = new JsonSerializationTest<TypeDefinition>(new TypeDefinition(new HashString("int")));
+            JsonSerializationTest<DataMap> test_dm = new JsonSerializationTest<DataMap>(new DataMap());
         }
     }
 }
