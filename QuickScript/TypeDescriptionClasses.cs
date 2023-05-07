@@ -195,7 +195,14 @@ namespace QuickScript
         public bool HasMembers() { return Members != null && Members.Count > 0; }
         public List<AttributeTag>? Attributes { get; set; }
         public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
-
+        public AttributeTag FindAttributeByName(HashString name)
+        {
+            if (HasAttributes())
+            {
+                return Attributes.Find(x => x.AttributeName == name);
+            }
+            return null;
+        }
         public TypeDefinition()
         {
             Name = new HashString();
