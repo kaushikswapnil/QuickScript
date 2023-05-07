@@ -82,11 +82,20 @@ namespace QuickScript
                 AttributeDefinition file_path = new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string"));
                 AttributeDefinitions.Add(file_path); 
             }
-
             {
                 //Alias
                 AttributeDefinition alias = new AttributeDefinition(new HashString("Alias"), 1, -1, new HashString("string"));
                 AttributeDefinitions.Add(alias);
+            }
+            {
+                //DefaultValue
+                AttributeDefinition def_val = new AttributeDefinition(new HashString("DefaultValue"), 0, 1, new HashString("string"));
+                AttributeDefinitions.Add(def_val);
+            }
+            {
+                //Precision
+                AttributeDefinition def_val = new AttributeDefinition(new HashString("Precision"), 0, 1, new HashString("int"));
+                AttributeDefinitions.Add(def_val);
             }
         }
 
@@ -94,31 +103,49 @@ namespace QuickScript
         {
             {
                 //bool
-                TypeDefinition boolean = new TypeDefinition(new HashString("bool"));
+                TypeDefinition boolean = new TypeDefinition { Name = new HashString("bool"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("true") }) }
+                };
                 TypeDefinitions.Add(boolean);
             }
 
             {
                 //int
-                TypeDefinition integer = new TypeDefinition(new HashString("int"));
+                TypeDefinition integer = new TypeDefinition
+                {
+                    Name = new HashString("int"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("0") }) }
+                };
                 TypeDefinitions.Add(integer);
             }
 
             {
                 //char
-                TypeDefinition character = new TypeDefinition(new HashString("char"));
+                TypeDefinition character = new TypeDefinition
+                {
+                    Name = new HashString("char"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType(" ") }) }
+                };
                 TypeDefinitions.Add(character);
             }
 
             {
                 //float
-                TypeDefinition floating = new TypeDefinition(new HashString("float"));
+                TypeDefinition floating = new TypeDefinition
+                {
+                    Name = new HashString("float"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("0.0") }) }
+                };
                 TypeDefinitions.Add(floating);
             }
 
             {
                 //string
-                TypeDefinition str = new TypeDefinition(new HashString("string"));
+                TypeDefinition str = new TypeDefinition
+                {
+                    Name = new HashString("string"),
+                    Attributes = new List<AttributeTag> { new AttributeTag(new HashString("DefaultValue"), new List<ValueType> { new ValueType("") }) }
+                };
                 TypeDefinitions.Add(str);
             }
         }
