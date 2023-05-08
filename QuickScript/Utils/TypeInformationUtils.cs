@@ -251,6 +251,8 @@ namespace QuickScript.Utils
                             throw new InvalidTypeDescription(InvalidTypeDescription.Reason.MemberHasInvalidAttributes, parent, mem_desc, e);
                         }
                     }
+
+                    retval.Add(new_member);
                 }
 
                 return retval;
