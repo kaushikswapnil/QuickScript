@@ -11,10 +11,10 @@ namespace QuickScript.Exporters
 {
     internal class CppExporter : IExporter
     {
-        private static readonly string GENERATED_SECTION_HEADER = "\nQS_GENERATED_SECTION_BEGIN\n";
-        private static readonly string GENERATED_SECTION_FOOTER = "\nQS_GENERATED_SECTION_END\n";
-        private static readonly string USER_SECTION_HEADER = "\nQS_USER_SECTION_BEGIN\n";
-        private static readonly string USER_SECTION_FOOTER = "\nQS_USER_SECTION_END\n";
+        private static readonly string GENERATED_SECTION_HEADER = "QS_GS_BEGIN\n";
+        private static readonly string GENERATED_SECTION_FOOTER = "QS_GS_END\n";
+        private static readonly string USER_SECTION_HEADER = "QS_US_BEGIN\n";
+        private static readonly string USER_SECTION_FOOTER = "QS_US_END\n";
 
         private static string GetOutputUnitPath(string absolute_input_file_path, in ExportSettings settings)
         {
@@ -69,7 +69,7 @@ namespace QuickScript.Exporters
             public override string SectionStringOutput()
             {
                 string retval = GENERATED_SECTION_HEADER;
-                retval += "#pragma once";
+                retval += "#pragma once\n";
                 retval += GENERATED_SECTION_FOOTER;
                 return retval;
             }
@@ -84,14 +84,11 @@ namespace QuickScript.Exporters
             public override string SectionStringOutput()
             {
                 string retval = GENERATED_SECTION_HEADER;
-
                 foreach (string reference_path in References)
                 {
-                    retval += "\n#include<" + reference_path + ">";
+                    retval += "#include<" + reference_path + ">\n";
                 }
-
                 retval += GENERATED_SECTION_FOOTER;
-
                 return retval;
             }
         }
@@ -106,18 +103,31 @@ namespace QuickScript.Exporters
             {
                 string retval = GENERATED_SECTION_HEADER;
                 retval += "class " + FromType.GetName() + "\n{\n";
-                retval += GENERATED_SECTION_FOOTER;
+                string indent = new string(' ', (int)(4));
 
+                if (FromType.HasMembers())
                 {
+                    string protected_member_decls = "protected:\n";
+                    foreach (TypeDefinition.MemberDefinition memberDefinition in FromType.Members)
+                    {
+                        protected_member_decls += indent + memberDefinition.TypeName.AsString() + " " + memberDefinition.Name.AsString();
+                        if (memberDefinition.HasValue())
+                        {
+                            protected_member_decls += " = " + memberDefinition.Value.AsString();
+                        }
+                        protected_member_decls += ";\n";
+                    }
+                    retval += protected_member_decls;
+                }                
 
-                }
+                retval += GENERATED_SECTION_FOOTER;
                 //user section
                 {
                     retval += USER_SECTION_HEADER;
                     retval += USER_SECTION_FOOTER;
                 }
                 retval += GENERATED_SECTION_HEADER;
-                retval += "\n}";
+                retval += "};\n";
                 retval += GENERATED_SECTION_FOOTER;
                 return retval;
             }
@@ -144,7 +154,10 @@ namespace QuickScript.Exporters
             }
             public void WriteFile()
             {
-                Console.WriteLine(FileOutput());
+                FileInfo fileInfo = new FileInfo(FilePath);
+                if (!fileInfo.Directory.Exists)
+                    fileInfo.Directory.Create();
+                File.WriteAllText(FilePath, FileOutput());
             }
         }
         public class OutputUnit
@@ -184,7 +197,6 @@ namespace QuickScript.Exporters
                         }
                     }
                 }
-
                 //construct header file
                 {
                     HeaderFile.Sections.Add(new IncludeGuardsSection(ref HeaderFile));
