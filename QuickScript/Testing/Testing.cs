@@ -212,6 +212,20 @@ namespace QuickScript.Testing
         }
     }
 
+    public class CppExporterTest : Test
+    {
+        public CppExporterTest(bool log = true, uint indent = 0) : base(log, indent, typeof(CppExporterTest).Name)
+        {
+            LogTestBeginIfAllowed();
+
+            DataMap dm = DataMap.ConstructDataMap(QuickscriptSettings.DEFAULT_DATA_MAP_PATH);
+            CppExporter exporter = new CppExporter();
+            exporter.Export(new ExportSettings(), dm);
+
+            LogTestEndIfAllowed();
+        }
+    }
+
     public class TestsSuite : Test
     {
         public TestsSuite(bool log = true, uint indent = 0) : base(log, indent)
@@ -220,6 +234,7 @@ namespace QuickScript.Testing
             CreateAndSerializeTestDataMap test_dm_create = new CreateAndSerializeTestDataMap(true, log, indent);
             ValidateDataMap test_dm_val = new ValidateDataMap(GetTestDataMap(), log, indent);
             JsonExporterTest test_json_export = new JsonExporterTest();
+            CppExporterTest test_cpp_export = new CppExporterTest();
         }
     }
 }
