@@ -36,6 +36,10 @@ namespace QuickScript.Utils
             {
                 return x.Val != y.Val;
             }
+            public override int GetHashCode()
+            {
+                return Val.GetHashCode();
+            }
             public override bool Equals(object o)
             {
                 if (!(o is HashValueType))
@@ -92,6 +96,10 @@ namespace QuickScript.Utils
         public static bool operator !=(HashString x, HashString y)
         {
             return x.Hash != y.Hash;
+        }
+        public override int GetHashCode()
+        {
+            return Hash.GetHashCode() ^ Str.GetHashCode();
         }
         public override bool Equals(object o)
         {
