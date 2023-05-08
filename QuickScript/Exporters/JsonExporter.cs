@@ -424,7 +424,7 @@ namespace QuickScript.Exporters
             string retval = JsonSerializer.Serialize<TypeInstanceDescription>(type_desc, GetSerializationOptions());
             return retval;
         }
-        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
+        public override void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
         {
             string export_val = "";
 
@@ -442,7 +442,7 @@ namespace QuickScript.Exporters
             return export_val;
         }
 
-        public void Export(in ExportSettings settings, in DataMap dm)
+        public override void Export(in ExportSettings settings, in DataMap dm)
         {
             string export = Export(dm);
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,71 +11,48 @@ namespace QuickScript.Exporters
 {
     internal class CppExporter : IExporter
     {
-        public abstract class IOutputSectionProperty
+        private static string GetOutputUnitPath(string absolute_input_file_path, in ExportSettings settings)
         {
-            IOutputSection Parent;
-            public IOutputSectionProperty(ref IOutputSection parent) {  Parent = parent; }
-            public abstract string PropertyStringOutput();
+            Uri input_path = new Uri(settings.InputDirectory);
+            Uri output_path = new Uri(settings.OutputDirectory);
+            Uri file_path = new Uri(absolute_input_file_path);
+            string relative_file_path = file_path.MakeRelative(input_path);
+            string output_file_path = output_path.AbsolutePath + relative_file_path;
+            return output_file_path;
+        }
+        //returns null if this class does not need an output 
+        private static string? GetTypeDefinitionOutputUnitPath(TypeDefinition type, in ExportSettings settings)
+        {
+            AttributeTag file_path_attr = type.FindAttributeByName(new HashString("FilePath"));
+            if (file_path_attr != null)
+            {
+                Assertion.Assert(file_path_attr != null, "Method called with " + type.GetName() + " which does not have file path attribute! Should only be called with methods that have that attribute");
+                string file_path_val = file_path_attr.Values[0];
+                return GetOutputUnitPath(file_path_val, settings);
+            }
+
+            return null;
         }
         public abstract class IOutputSection
         {
             protected IOutputFile Parent;
-            protected List<IOutputSectionProperty> Children;
 
             public IOutputSection(ref IOutputFile parent)
             {
                 Parent = parent;
-                Children = null;
-            }
-            public IOutputSection(ref IOutputFile parent, List<IOutputSectionProperty> childen) 
-            {
-                Parent = parent;
-                Children = childen;
             }
 
             public abstract string SectionStringOutput();
-        }
-        public class ReferenceOutputSection : IOutputSection
-        {
-            private class ReferenceProperty : IOutputSectionProperty
-            {
-                public string RefPath { get; set; }
-                public ReferenceProperty(ref IOutputSection parent, string ref_path) : base(ref parent)
-                {
-                    RefPath = ref_path;
-                }
-
-                public override string PropertyStringOutput()
-                {
-                    return "#include<" + RefPath + ".h>\n";
-                }
-            }
-            private List<IOutputSectionProperty> CreateReferencePropertiesList(IOutputFile parent)
-            {
-                List<IOutputSectionProperty> retval = new List<IOutputSectionProperty>();
-
-                return retval;
-            }
-            public ReferenceOutputSection(ref IOutputFile parent) : base(ref parent)
-            {
-                Children = CreateReferencePropertiesList(parent);
-            }
-            public override string SectionStringOutput()
-            {
-                string retval = "";
-                foreach (IOutputSectionProperty prop in Children)
-                {
-                    retval += prop.PropertyStringOutput();
-                }
-
-                return retval;
-            }
         }
         public abstract class IOutputFile
         {
             protected OutputUnit Parent;
             protected List<IOutputSection> Children;
-            public IOutputFile(OutputUnit parent) { Parent = parent; }
+            public IOutputFile(OutputUnit parent) 
+            { 
+                Parent = parent;
+                Children = new List<IOutputSection>();
+            }
             public virtual string FileOutput() 
             {
                 string retval = "";
@@ -89,7 +67,9 @@ namespace QuickScript.Exporters
 
         public class OutputHeaderFile : IOutputFile
         {
-            public OutputHeaderFile(OutputUnit parent) : base(parent) { }
+            public OutputHeaderFile(OutputUnit parent, List<TypeDefinition> defs_in_file) : base(parent) 
+            {
+            }
             public override void WriteFile()
             {
                 throw new NotImplementedException();
@@ -98,7 +78,7 @@ namespace QuickScript.Exporters
 
         public class OutputCppFile : IOutputFile
         {
-            public OutputCppFile(OutputUnit parent) : base(parent) { }
+            public OutputCppFile(OutputUnit parent, List<TypeDefinition> defs_in_file) : base(parent) { }
             public override void WriteFile()
             {
                 throw new NotImplementedException();
@@ -111,16 +91,18 @@ namespace QuickScript.Exporters
             public OutputHeaderFile HeaderFile;
             public OutputCppFile CppFile;
             public HashString FullName; //Is with full output path
-            public OutputUnit(List<TypeDefinition> type_def_list) { TypeDefinitionsInFile = type_def_list; }
+            public OutputUnit(HashString full_name, List<TypeDefinition> type_def_list) 
+            {
+                FullName = full_name;
+                TypeDefinitionsInFile = type_def_list;
+                HeaderFile = new OutputHeaderFile(this, type_def_list);
+                CppFile = new OutputCppFile(this, type_def_list);
+            }
         }
 
-        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
+        public override void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
         {
             Assertion.SoftAssert(false, "Cpp exporter does not implement type instance exporting!");
-        }
-        bool NeedsExport(TypeDefinition type_def, in DataMap dm)
-        {
-            return type_def.FindAttributeByName(new HashString("FilePath")) == null;
         }
         void Log(string message)
         {
@@ -129,32 +111,34 @@ namespace QuickScript.Exporters
                 Logging.Log(message);
             }
         }
-        public void Export(in ExportSettings settings, in DataMap dm)
+        public override void Export(in ExportSettings settings, in DataMap dm)
         {
             //no need to export attr defs for cpp
             //only type defs
-            Uri input_path = new Uri(settings.InputDirectory);
-            Uri output_path = new Uri(settings.OutputDirectory);
-
             Dictionary<HashString, List<TypeDefinition>> file_type_def_dictionary = new Dictionary<HashString, List<TypeDefinition>>();
 
+            DebugLog(settings, "Collecting all type defs to export");
             foreach(TypeDefinition type_def in dm.TypeDefinitions)
             {
-                AttributeTag file_path_attr = type_def.FindAttributeByName(new HashString("FilePath"));
-                if (file_path_attr != null)
+                string? potential_output_path = GetTypeDefinitionOutputUnitPath(type_def, settings);
+                if (potential_output_path != null)
                 {
-                    string file_path_val = file_path_attr.Values[0];
-                    Uri file_path = new Uri(file_path_val);
-                    string relative_file_path = file_path.MakeRelative(input_path);
-                    string output_file_path = output_path.AbsolutePath + relative_file_path;
-                    HashString output_file_path_hs = new HashString(output_file_path);
+                    HashString output_hs = new HashString(potential_output_path);
 
-                    if (file_type_def_dictionary.ContainsKey(output_file_path_hs) == false)
+                    if (file_type_def_dictionary.ContainsKey(output_hs) == false)
                     {
-                        file_type_def_dictionary[output_file_path_hs] = new List<TypeDefinition>();
+                        file_type_def_dictionary.Add(output_hs, new List<TypeDefinition>());
                     }
-                    file_type_def_dictionary[output_file_path_hs].Add(type_def);
+
+                    file_type_def_dictionary[output_hs].Add(type_def);
                 }
+            }
+
+            DebugLog(settings, "Collected file path - type defs dictionary " + file_type_def_dictionary);
+
+            foreach (KeyValuePair<HashString, List<TypeDefinition>> file_type_def_pair in file_type_def_dictionary)
+            {
+
             }
         }
     }

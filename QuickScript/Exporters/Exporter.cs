@@ -16,6 +16,7 @@ namespace QuickScript.Exporters
     {
         public string InputDirectory = QuickscriptSettings.DEFAULT_INPUT_TEST_DIRECTORY;
         public string OutputDirectory = QuickscriptSettings.DEFAULT_OUTPUT_TEST_DIRECTORY;
+        public bool DebugLog = true;
 
         [Flags]
         public enum ESettingFlags : uint
@@ -27,10 +28,17 @@ namespace QuickScript.Exporters
         public ESettingFlags SettingFlags = (ESettingFlags.WriteToOutputDirectory) | (ESettingFlags.WriteToConsole);
     }
 
-    public interface IExporter
+    public abstract class IExporter
     {
-        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list);
-        public void Export(in ExportSettings settings, in DataMap dm);
+        public abstract void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list);
+        public abstract void Export(in ExportSettings settings, in DataMap dm);
+        public static void DebugLog(in ExportSettings settings, string message)
+        {
+            if (settings.DebugLog)
+            {
+                Logging.Log(message);
+            }
+        }
     }
 
     public class ConsoleExporter : IExporter
@@ -102,7 +110,7 @@ namespace QuickScript.Exporters
             return retval;
         }
 
-        public void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
+        public override void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
         {
             string export_val = "";
 
@@ -192,7 +200,7 @@ namespace QuickScript.Exporters
             return retval;
         }
 
-        public void Export(in ExportSettings settings, in DataMap dm)
+        public override void Export(in ExportSettings settings, in DataMap dm)
         {
             string export_val = "";
             export_val += Export(dm.AttributeDefinitions);
