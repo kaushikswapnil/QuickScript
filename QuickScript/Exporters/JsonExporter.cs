@@ -172,7 +172,6 @@ namespace QuickScript.Exporters
             read = reader.Read();
             while (reader.TokenType != JsonTokenType.EndArray)
             {
-                read = reader.Read();
                 Assertion.Assert(reader.TokenType == JsonTokenType.StartObject, "Error reading TypeDefinition object");
                 read = reader.Read();
                 Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
@@ -180,11 +179,13 @@ namespace QuickScript.Exporters
                 Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
                 str = reader.GetString();
                 HashString mem_name = new HashString(str);
+                read = reader.Read();
                 Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
                 read = reader.Read();
                 Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
                 str = reader.GetString();
                 HashString mem_type_name = new HashString(str);
+                read = reader.Read();
                 Assertion.Assert(reader.TokenType == JsonTokenType.PropertyName, "Error reading TypeDefinition object");
                 read = reader.Read();
                 Assertion.Assert(reader.TokenType == JsonTokenType.String, "TypeDefinition should have a string here");
@@ -193,7 +194,7 @@ namespace QuickScript.Exporters
                 read = reader.Read();
                 List<AttributeTag> mem_attributes = ReadAttributeTags(ref reader);
                 read = reader.Read();
-
+                read = reader.Read();
                 mem_defs.Add(new TypeDefinition.MemberDefinition { Name = mem_name, TypeName = mem_type_name, Attributes = mem_attributes, Value = mem_val });
             }
 
