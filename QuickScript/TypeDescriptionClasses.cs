@@ -154,7 +154,7 @@ namespace QuickScript
             public HashString TypeName { get; set; }
             public ValueType Value { get; set; } = new ValueType();
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
-            public bool HasValue() { return Value != null; }
+            public bool HasValue() { return Value != null && Value != ""; }
             public override int GetHashCode()
             {
                 return Name.GetHashCode() ^ TypeName.GetHashCode() ^ Value.GetHashCode();
@@ -182,7 +182,7 @@ namespace QuickScript
                         return false;
                 }
 
-                if (x.HasValue() && x.Value != y.Value)
+                if (x.HasValue() && x.Value.Equals(y.Value))
                 {
                     return false;
                 }
