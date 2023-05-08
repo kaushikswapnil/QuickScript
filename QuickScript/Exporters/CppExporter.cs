@@ -11,12 +11,17 @@ namespace QuickScript.Exporters
 {
     internal class CppExporter : IExporter
     {
+        private static readonly string GENERATED_SECTION_HEADER = "\nQS_GENERATED_SECTION_BEGIN\n";
+        private static readonly string GENERATED_SECTION_FOOTER = "\nQS_GENERATED_SECTION_END\n";
+        private static readonly string USER_SECTION_HEADER = "\nQS_USER_SECTION_BEGIN\n";
+        private static readonly string USER_SECTION_FOOTER = "\nQS_USER_SECTION_END\n";
+
         private static string GetOutputUnitPath(string absolute_input_file_path, in ExportSettings settings)
         {
             Uri input_path = new Uri(settings.InputDirectory);
             Uri output_path = new Uri(settings.OutputDirectory);
             Uri file_path = new Uri(absolute_input_file_path);
-            string relative_file_path = file_path.MakeRelative(input_path);
+            string relative_file_path = input_path.MakeRelative(file_path);
             string output_file_path = output_path.AbsolutePath + relative_file_path;
             return output_file_path;
         }
@@ -33,83 +38,179 @@ namespace QuickScript.Exporters
 
             return null;
         }
+        private static string ReplaceQsFileExtensionWith(string file_path, string extension)
+        {
+            return file_path.Replace(".qs", extension);
+        }
+        private static string ConvertOutputUnitPathToHeaderFilePath(string path)
+        {
+            return ReplaceQsFileExtensionWith(path, ".h");
+        }
+        private static string ConvertOutputUnitPathToCppFilePath(string path)
+        {
+            return ReplaceQsFileExtensionWith(path, ".cpp");
+        }
         public abstract class IOutputSection
         {
-            protected IOutputFile Parent;
-
-            public IOutputSection(ref IOutputFile parent)
+            protected OutputFile Parent;
+            public string UserSectionData = "";
+            public IOutputSection(ref OutputFile parent)
             {
                 Parent = parent;
             }
 
             public abstract string SectionStringOutput();
         }
-        public abstract class IOutputFile
+        public class IncludeGuardsSection : IOutputSection
+        {
+            public IncludeGuardsSection(ref OutputFile parent) : base(ref parent)
+            {
+            }
+            public override string SectionStringOutput()
+            {
+                string retval = GENERATED_SECTION_HEADER;
+                retval += "#pragma once";
+                retval += GENERATED_SECTION_FOOTER;
+                return retval;
+            }
+        }
+        public class ReferenceSection : IOutputSection
+        {
+            List<string> References;
+            public ReferenceSection(ref OutputFile parent, List<string> references) : base(ref parent)
+            {
+                References = references;
+            }
+            public override string SectionStringOutput()
+            {
+                string retval = GENERATED_SECTION_HEADER;
+
+                foreach (string reference_path in References)
+                {
+                    retval += "\n#include<" + reference_path + ">";
+                }
+
+                retval += GENERATED_SECTION_FOOTER;
+
+                return retval;
+            }
+        }
+        public class ClassDeclarationSection : IOutputSection
+        {
+            public TypeDefinition FromType;
+            public ClassDeclarationSection(ref OutputFile parent, TypeDefinition from_def) : base(ref parent)
+            {
+                FromType = from_def;
+            }
+            public override string SectionStringOutput()
+            {
+                string retval = GENERATED_SECTION_HEADER;
+                retval += "class " + FromType.GetName() + "\n{\n";
+                retval += GENERATED_SECTION_FOOTER;
+
+                {
+
+                }
+                //user section
+                {
+                    retval += USER_SECTION_HEADER;
+                    retval += USER_SECTION_FOOTER;
+                }
+                retval += GENERATED_SECTION_HEADER;
+                retval += "\n}";
+                retval += GENERATED_SECTION_FOOTER;
+                return retval;
+            }
+        }
+        public class OutputFile
         {
             protected OutputUnit Parent;
-            protected List<IOutputSection> Children;
-            public IOutputFile(OutputUnit parent) 
+            public List<IOutputSection> Sections;
+            public string FilePath;
+            public OutputFile(OutputUnit parent, string filepath) 
             { 
                 Parent = parent;
-                Children = new List<IOutputSection>();
+                Sections = new List<IOutputSection>();
+                FilePath = filepath;
             }
-            public virtual string FileOutput() 
+            public string FileOutput() 
             {
                 string retval = "";
-                foreach (IOutputSection sec in Children)
+                foreach (IOutputSection sec in Sections)
                 {
                     retval += sec.SectionStringOutput();
                 }
                 return retval;
             }
-            public abstract void WriteFile();
-        }
-
-        public class OutputHeaderFile : IOutputFile
-        {
-            public OutputHeaderFile(OutputUnit parent, List<TypeDefinition> defs_in_file) : base(parent) 
+            public void WriteFile()
             {
-            }
-            public override void WriteFile()
-            {
-                throw new NotImplementedException();
+                Console.WriteLine(FileOutput());
             }
         }
-
-        public class OutputCppFile : IOutputFile
-        {
-            public OutputCppFile(OutputUnit parent, List<TypeDefinition> defs_in_file) : base(parent) { }
-            public override void WriteFile()
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public class OutputUnit
         {
             public List<TypeDefinition> TypeDefinitionsInFile { get; set; }
-            public OutputHeaderFile HeaderFile;
-            public OutputCppFile CppFile;
+            public OutputFile HeaderFile;
+            public OutputFile CppFile;
             public HashString FullName; //Is with full output path
-            public OutputUnit(HashString full_name, List<TypeDefinition> type_def_list) 
+            public OutputUnit(HashString full_name, List<TypeDefinition> type_def_list, DataMap dm, in ExportSettings settings) 
             {
                 FullName = full_name;
                 TypeDefinitionsInFile = type_def_list;
-                HeaderFile = new OutputHeaderFile(this, type_def_list);
-                CppFile = new OutputCppFile(this, type_def_list);
+                string header_file_path = ConvertOutputUnitPathToHeaderFilePath(full_name.AsString());
+                HeaderFile = new OutputFile(this, header_file_path);
+                string cpp_file_path = ConvertOutputUnitPathToCppFilePath(full_name.AsString());
+                CppFile = new OutputFile(this, cpp_file_path);
+
+                List<string> references_in_header_file = new List<string>();
+                List<ClassDeclarationSection> classes_in_header = new List<ClassDeclarationSection>();
+                
+                foreach (TypeDefinition type_def in type_def_list)
+                {
+                    classes_in_header.Add(new ClassDeclarationSection(ref HeaderFile, type_def));
+
+                    if (type_def.HasMembers())
+                    {
+                        foreach (TypeDefinition.MemberDefinition memberDefinition in type_def.Members)
+                        {
+                            TypeDefinition? member_type_def = dm.GetTypeDefinitionByName(memberDefinition.TypeName);
+                            Assertion.Assert(member_type_def != null, "Should always have member here!");
+                            string? member_type_def_file_path = GetTypeDefinitionOutputUnitPath(member_type_def, settings);
+                            if (member_type_def_file_path != null)
+                            {
+                                //this member has a type def and we should reference it
+                                references_in_header_file.Add(ConvertOutputUnitPathToHeaderFilePath(member_type_def_file_path));
+                            }
+                        }
+                    }
+                }
+
+                //construct header file
+                {
+                    HeaderFile.Sections.Add(new IncludeGuardsSection(ref HeaderFile));
+                    HeaderFile.Sections.Add(new ReferenceSection(ref HeaderFile, references_in_header_file));
+                    foreach (ClassDeclarationSection sec in classes_in_header)
+                    {
+                        HeaderFile.Sections.Add(sec);
+                    }
+                }
+                //construct cpp file
+                {
+                    CppFile.Sections.Add(new ReferenceSection(ref CppFile, new List<string> { HeaderFile.FilePath }));
+                }
+            }
+            public void WriteUnit(in ExportSettings settings)
+            {
+                IExporter.DebugLog(settings, "Writing header file path " + HeaderFile.FilePath);
+                HeaderFile.WriteFile();
+                IExporter.DebugLog(settings, "Writing cpp file path " + CppFile.FilePath);
+                CppFile.WriteFile();
             }
         }
 
         public override void Export(in ExportSettings settings, in List<TypeInstanceDescription> type_desc_list)
         {
             Assertion.SoftAssert(false, "Cpp exporter does not implement type instance exporting!");
-        }
-        void Log(string message)
-        {
-            if (true)
-            {
-                Logging.Log(message);
-            }
         }
         public override void Export(in ExportSettings settings, in DataMap dm)
         {
@@ -138,7 +239,9 @@ namespace QuickScript.Exporters
 
             foreach (KeyValuePair<HashString, List<TypeDefinition>> file_type_def_pair in file_type_def_dictionary)
             {
-
+                DebugLog(settings, "Creating and writing output unit with name " + file_type_def_pair.Key);
+                OutputUnit output_unit = new OutputUnit(file_type_def_pair.Key, file_type_def_pair.Value, dm, settings);
+                output_unit.WriteUnit(settings);
             }
         }
     }
