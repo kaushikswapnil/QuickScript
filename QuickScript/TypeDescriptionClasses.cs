@@ -147,6 +147,63 @@ namespace QuickScript
 
     public class TypeDefinition
     {
+        public class MethodDefinition
+        {
+            public class MethodArgument
+            {
+                public HashString Name;
+                public HashString TypeName;
+                public MethodArgument(HashString name, HashString type)
+                {
+                    Name = name;
+                    TypeName = type;
+                }
+                public override int GetHashCode()
+                {
+                    return Name.GetHashCode() ^ TypeName.GetHashCode();
+                }
+                public override bool Equals(object o)
+                {
+                    if (!(o is MethodArgument))
+                        return false;
+
+                    MethodArgument x = (MethodArgument)o;
+                    MethodArgument y = this;
+
+                    if (x.Name != y.Name ||
+                        x.TypeName != y.TypeName)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            public HashString Name { get; set; }
+            public List<AttributeTag>? Attributes { get; set; }
+            public HashString ReturnTypeDef = new HashString("void");
+            public bool HasReturn() { return ReturnTypeDef != null; }
+            public List<MethodArgument>? Arguments;
+            public bool HasArguments() { return Arguments != null && Arguments.Count > 0; }
+            public override int GetHashCode()
+            {
+                return Name.GetHashCode() ^ ReturnTypeDef.GetHashCode();
+            }
+            public override bool Equals(object o)
+            {
+                if (!(o is MethodDefinition))
+                    return false;
+
+                MethodDefinition x = (MethodDefinition)o;
+                MethodDefinition y = this;
+
+                if (x.Name != y.Name ||
+                    x.ReturnTypeDef != y.ReturnTypeDef)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
         public class MemberDefinition
         {
             public HashString Name { get; set;} = new HashString();
@@ -191,6 +248,8 @@ namespace QuickScript
             }
         }
         public HashString Name { get; set; }
+        public List<MethodDefinition>? Methods { get; set; }
+        public bool HasMethods() { return Methods != null && Methods.Count > 0; }
         public List<MemberDefinition>? Members { get; set; }
         public bool HasMembers() { return Members != null && Members.Count > 0; }
         public List<AttributeTag>? Attributes { get; set; }
@@ -258,6 +317,12 @@ namespace QuickScript
         public List<AttributeInstanceDescription>? Attributes { get; set; }
         public ValueType? Value { get; set; }
         public bool HasAttributes() { return Attributes != null && Attributes.Count > 0;}
+        public class MethodDescription
+        {
+            public HashString Name { get; set; } = new HashString("");
+            public HashString ReturnTypeDef { get; set; } = new HashString("void");
+            public List<AttributeInstanceDescription>? Attributes { get; set; }
+        }
         public class MemberDescription
         {
             public HashString Name { get; set; } = new HashString();

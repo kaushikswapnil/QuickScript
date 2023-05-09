@@ -323,7 +323,6 @@ namespace QuickScript.Utils
                 };
                 retval.Add(boolean);
             }
-
             {
                 //int
                 TypeDefinition integer = new TypeDefinition
@@ -333,7 +332,6 @@ namespace QuickScript.Utils
                 };
                 retval.Add(integer);
             }
-
             {
                 //char
                 TypeDefinition character = new TypeDefinition
@@ -343,7 +341,6 @@ namespace QuickScript.Utils
                 };
                 retval.Add(character);
             }
-
             {
                 //float
                 TypeDefinition floating = new TypeDefinition
@@ -353,7 +350,6 @@ namespace QuickScript.Utils
                 };
                 retval.Add(floating);
             }
-
             {
                 //string
                 TypeDefinition str = new TypeDefinition
