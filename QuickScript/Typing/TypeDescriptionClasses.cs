@@ -1,13 +1,13 @@
-﻿using QuickScript.Utils;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using QuickScript.Utils;
 
-namespace QuickScript
+namespace QuickScript.Typing
 {
     public class ValueType
     {
         public string Val;
-        public ValueType() 
+        public ValueType()
         {
             Val = "";
         }
@@ -28,12 +28,16 @@ namespace QuickScript
         {
             if (!(o is ValueType))
                 return false;
-            return this.Val == ((ValueType)o).Val;
+            return Val == ((ValueType)o).Val;
+        }
+        public bool IsEmpty()
+        {
+            return Val == "";
         }
     }
 
     public class AttributeDefinition
-    {        
+    {
         public HashString Name { get; set; }
         public int MinValueCount { get; set; } = 0;
         public int MaxValueCount { get; set; } = 0;
@@ -46,7 +50,7 @@ namespace QuickScript
             ValueTypeName = valueTypeName;
         }
 
-        public AttributeDefinition(HashString name) 
+        public AttributeDefinition(HashString name)
         {
             Name = name;
         }
@@ -60,7 +64,7 @@ namespace QuickScript
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode() ^ MinValueCount.GetHashCode() ^ MaxValueCount.GetHashCode(); 
+            return Name.GetHashCode() ^ MinValueCount.GetHashCode() ^ MaxValueCount.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -80,7 +84,7 @@ namespace QuickScript
     {
         public HashString AttributeName { get; set; }
         public List<ValueType>? Values { get; set; }
-        public bool HasValues() { return Values != null && Values.Count > 0;}
+        public bool HasValues() { return Values != null && Values.Count > 0; }
 
         public AttributeTag(AttributeDefinition attr_def)
         {
@@ -129,7 +133,7 @@ namespace QuickScript
     public class AttributeInstanceDescription
     {
         public HashString Name { get; set; }
-        public List<ValueType>? Values { get; set;}
+        public List<ValueType>? Values { get; set; }
 
         public bool HasValues() { return Values != null && Values.Count > 0; }
 
@@ -181,7 +185,6 @@ namespace QuickScript
             public HashString Name { get; set; }
             public List<AttributeTag>? Attributes { get; set; }
             public HashString ReturnTypeDef = new HashString("void");
-            public bool HasReturn() { return ReturnTypeDef != null; }
             public List<MethodArgument>? Arguments;
             public bool HasArguments() { return Arguments != null && Arguments.Count > 0; }
             public override int GetHashCode()
@@ -206,7 +209,7 @@ namespace QuickScript
         }
         public class MemberDefinition
         {
-            public HashString Name { get; set;} = new HashString();
+            public HashString Name { get; set; } = new HashString();
             public List<AttributeTag> Attributes { get; set; } = new List<AttributeTag>();
             public HashString TypeName { get; set; }
             public ValueType Value { get; set; } = new ValueType();
@@ -316,7 +319,7 @@ namespace QuickScript
         public HashString Name { get; set; } = new HashString();
         public List<AttributeInstanceDescription>? Attributes { get; set; }
         public ValueType? Value { get; set; }
-        public bool HasAttributes() { return Attributes != null && Attributes.Count > 0;}
+        public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
         public class MethodDescription
         {
             public HashString Name { get; set; } = new HashString("");
@@ -335,6 +338,6 @@ namespace QuickScript
         }
         public List<MemberDescription>? Members { get; set; }
 
-        public bool HasMembers() { return Members != null && Members.Count > 0;}
+        public bool HasMembers() { return Members != null && Members.Count > 0; }
     }
 }
