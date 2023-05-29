@@ -1,4 +1,5 @@
 ﻿using QuickScript.Exporters;
+using QuickScript.Typing;
 using QuickScript.Utils;
 using System;
 using System.Collections.Generic;
@@ -105,8 +106,10 @@ namespace QuickScript.Testing
                 new JsonSerializationTest<HashString>(new List<HashString> { new HashString("HelloWorld") }, log);
             JsonSerializationTest<AttributeDefinition> test_ad =
                 new JsonSerializationTest<AttributeDefinition>(new AttributeDefinition(new HashString("FilePath"), 1, new HashString("string")), log);
-            JsonSerializationTest<TypeDefinition> test_td = new JsonSerializationTest<TypeDefinition>(new TypeDefinition(new HashString("int")), log);
-            JsonSerializationTest<DataMap> test_dm = new JsonSerializationTest<DataMap>(new DataMap(), log);
+            JsonSerializationTest<TypeDefinition> test_td = 
+                new JsonSerializationTest<TypeDefinition>(new TypeDefinition(new HashString("int")), log);
+            JsonSerializationTest<DataMap> test_dm_basic = new JsonSerializationTest<DataMap>(GetTestDataMap(true, false), log);
+            JsonSerializationTest<DataMap> test_dm_parsed = new JsonSerializationTest<DataMap>(GetTestDataMap(true, true), log);
         }
     }
 

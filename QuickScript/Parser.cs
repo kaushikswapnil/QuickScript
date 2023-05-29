@@ -1,4 +1,5 @@
-﻿using QuickScript.Utils;
+﻿using QuickScript.Typing;
+using QuickScript.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace QuickScript
 {
+    using ValueType = QuickScript.Typing.ValueType;
     public class Parser
     {
         public static List<TypeInstanceDescription> ParseDirectory(in string directory_name, in bool parse_sub_directories = true)

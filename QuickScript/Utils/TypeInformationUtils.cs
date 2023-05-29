@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QuickScript.Typing;
 
 namespace QuickScript.Utils
 {
+    using ValueType = QuickScript.Typing.ValueType;
     public static class TypeInformationUtils
     {
         public static AttributeInstanceDescription? GetAttributeInstanceDescription(HashString attr_name, TypeInstanceDescription type_desc)

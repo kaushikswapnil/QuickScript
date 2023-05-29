@@ -1,4 +1,5 @@
-﻿using QuickScript.Utils;
+﻿using QuickScript.Typing;
+using QuickScript.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

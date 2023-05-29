@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using QuickScript.Utils;
 using System.Globalization;
 using System.Text.Json.Nodes;
-using System.Reflection.Metadata;
+using QuickScript.Typing;
 
 namespace QuickScript.Exporters
 {
