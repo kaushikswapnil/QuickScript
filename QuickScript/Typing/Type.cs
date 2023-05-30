@@ -1,46 +1,46 @@
 ﻿using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using QuickScript.Utils;
+using static QuickScript.Utils.HashString;
 
 namespace QuickScript.Typing
 {
+    public class NamedTypedEntity
+    {
+        public HashString Name;
+        public HashString Type;
+        public NamedTypedEntity(HashString name, HashString type)
+        {
+            Name = name;
+            Type = type;
+        }
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode() ^ Type.GetHashCode();
+        }
+        public override bool Equals(object o)
+        {
+            if (!(o is NamedTypedEntity))
+                return false;
+
+            NamedTypedEntity x = (NamedTypedEntity)o;
+            NamedTypedEntity y = this;
+
+            if (x.Name != y.Name || x.Type != y.Type)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
     public class TypeDefinition
     {
         public class MethodDefinition
         {
-            public class MethodArgument
-            {
-                public HashString Name;
-                public HashString TypeName;
-                public MethodArgument(HashString name, HashString type)
-                {
-                    Name = name;
-                    TypeName = type;
-                }
-                public override int GetHashCode()
-                {
-                    return Name.GetHashCode() ^ TypeName.GetHashCode();
-                }
-                public override bool Equals(object o)
-                {
-                    if (!(o is MethodArgument))
-                        return false;
-
-                    MethodArgument x = (MethodArgument)o;
-                    MethodArgument y = this;
-
-                    if (x.Name != y.Name ||
-                        x.TypeName != y.TypeName)
-                    {
-                        return false;
-                    }
-                    return true;
-                }
-            }
-            public HashString Name { get; set; }
             public List<AttributeTag>? Attributes { get; set; }
-            public HashString ReturnTypeDef = new HashString("void");
-            public List<MethodArgument>? Arguments;
+            public List<NamedTypedEntity>? Arguments;
+            public HashString Name { get; set; }
+            public HashString ReturnTypeDef { get; set; }
             public bool HasArguments() { return Arguments != null && Arguments.Count > 0; }
             public override int GetHashCode()
             {
@@ -54,11 +54,14 @@ namespace QuickScript.Typing
                 MethodDefinition x = (MethodDefinition)o;
                 MethodDefinition y = this;
 
-                if (x.Name != y.Name ||
-                    x.ReturnTypeDef != y.ReturnTypeDef)
+                if (x.Name.Equals(y.Name) == false ||
+                    x.ReturnTypeDef.Equals(y.ReturnTypeDef) == false ||
+                    y.HasArguments() != x.HasArguments()
+                    || (x.HasArguments() && x.Arguments.SequenceEqual(y.Arguments) == false))
                 {
                     return false;
                 }
+
                 return true;
             }
         }
@@ -166,6 +169,7 @@ namespace QuickScript.Typing
             public HashString Name { get; set; } = new HashString("");
             public HashString ReturnTypeDef { get; set; } = new HashString("void");
             public List<AttributeInstanceDescription>? Attributes { get; set; }
+            public List<NamedTypedEntity>? Arguments { get; set; }  
         }
         public class MemberDescription
         {
