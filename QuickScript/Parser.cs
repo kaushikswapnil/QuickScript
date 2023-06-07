@@ -74,6 +74,8 @@ namespace QuickScript
                     case '}':
                     case '[':
                     case ']':
+                    case '(':
+                    case ')':
                         if (!reading_comment)
                         {
                             TryAddProperWordToTokens();
@@ -98,7 +100,6 @@ namespace QuickScript
 
             return ExtractTypes(tokens);
         }
-
         private static List<TypeInstanceDescription> ExtractTypes(in List<string> tokens)
         {
             ReadState prevState = ReadState.None;
@@ -116,14 +117,17 @@ namespace QuickScript
 
             TypeInstanceDescription cur_class = new TypeInstanceDescription();
             List<AttributeInstanceDescription> cur_attributes = new List<AttributeInstanceDescription>();
+            List<AttributeInstanceDescription> property_attributes = new List<AttributeInstanceDescription>();
             List<TypeInstanceDescription.MemberDescription> cur_members = new List<TypeInstanceDescription.MemberDescription>();
+            List<TypeInstanceDescription.MethodDescription> cur_methods = new List<TypeInstanceDescription.MethodDescription>();
             TypeInstanceDescription.MemberDescription cur_member = new TypeInstanceDescription.MemberDescription();
+            TypeInstanceDescription.MethodDescription cur_method = new TypeInstanceDescription.MethodDescription();
 
             foreach (string token in tokens)
             {
                 if (token == "[")
                 {
-                    Assertion.Assert(readState == ReadState.Class || readState == ReadState.Member, "Invalid flow. Read attributes before class or member");
+                    Assertion.Assert(readState == ReadState.Class || readState == ReadState.Property, "Invalid flow. Read attributes before class or member");
                     ChangeReadState(ReadState.Attributes);
                 }
                 else if (token == "]")
@@ -138,8 +142,8 @@ namespace QuickScript
                         }
                         else
                         {
-                            Assertion.Assert(prevState == ReadState.Member, "Should have been reading a member");
-                            cur_member.Attributes = cur_attributes;
+                            Assertion.Assert(prevState == ReadState.Property, "Should have been reading a member");
+                            property_attributes = cur_attributes;
                         }
 
                         cur_attributes = new List<AttributeInstanceDescription>();
@@ -153,7 +157,9 @@ namespace QuickScript
                     Assertion.Assert(readState == ReadState.Class);
                     Assertion.Assert(unhandled_tokens.Count > 0, "Should already have at least one token as a class name!");
                     cur_class.Name.Reset(unhandled_tokens.Pop());
-                    ChangeReadState(ReadState.Member);
+                    ChangeReadState(ReadState.Property);
+                    Assertion.Assert(unhandled_tokens.Count == 0, "Still have unhandled tokens after reading class name " +
+                        cur_class.Name.AsString() + ". We should have no unhandled tokens at this stage of class def");
                 }
                 else if (token == "}")
                 {
@@ -166,22 +172,81 @@ namespace QuickScript
                     retVal.Add(cur_class);
                     cur_class = new TypeInstanceDescription();
                     ChangeReadState(ReadState.Class);
+                    Assertion.Assert(unhandled_tokens.Count == 0, "Still have unhandled tokens after encountering closing brackets for class "
+                       + retVal[retVal.Count - 1].Name.AsString() + ". At this point we should have read all tokens!");
                 }
                 else if (token == ";")
                 {
-                    Assertion.Assert(readState == ReadState.Member, "Should only encounter ; when reading members");
-                    Assertion.Assert(unhandled_tokens.Count > 1, "Should have atleast the member type and name here");
-                    if (unhandled_tokens.Count > 2)
-                    {
-                        //type, name, val
-                        cur_member.Value = new ValueType(unhandled_tokens.Pop()); 
-                    }
-                    //type, name
-                    cur_member.Name.Reset(unhandled_tokens.Pop());
-                    cur_member.TypeName.Reset(unhandled_tokens.Pop());
+                    Assertion.Assert(readState == ReadState.Property, "Should only encounter ; when reading properties such as members or methods");
+                    Assertion.Assert(unhandled_tokens.Count >= 2, "Encountered a ';' but not enough tokens before it");
 
-                    cur_members.Add(cur_member);
-                    cur_member = new TypeInstanceDescription.MemberDescription();
+                    void ReadMemberTokens(ref TypeInstanceDescription.MemberDescription mem_desc,  ref Stack<string> member_tokens)
+                    {
+                        //type, name
+                        //for a member, we need at least 2 tokens, possibly 3 as type, name, val
+                        Assertion.Assert(member_tokens.Count >= 2, "Could not read member while reading class " +
+                            cur_class.Name.AsString() + ", because there were not enough tokens. A member should have atleast a type and a name");
+                        mem_desc.TypeName.Reset(member_tokens.Pop());
+                        mem_desc.Name.Reset(member_tokens.Pop());
+                        if (member_tokens.Count > 0)
+                        {
+                            mem_desc.Value = new ValueType(member_tokens.Pop());
+                        }
+                    }
+                    string top_token = unhandled_tokens.Pop();
+                    if (top_token == ")")
+                    {
+                        //reading a function
+                        Assertion.Assert(unhandled_tokens.Count >= 3, "Should have at least the name and return type for function, while reading class "
+                            + cur_class.Name.AsString());
+                        top_token = unhandled_tokens.Pop();
+                        while(top_token != "(")
+                        {
+                            Assertion.Assert(unhandled_tokens.Count >= 5, "Did not have enough tokens" +
+                                " while reading function in  class "
+                            + cur_class.Name.AsString());
+                            //read values until we reach ','
+                            Stack<string> argument_tokens = new Stack<string>();
+                            while (top_token!= ",")
+                            {
+                                if (top_token == "(")
+                                {
+                                    break;
+                                }
+                                argument_tokens.Push(top_token);
+                                top_token = unhandled_tokens.Pop();
+                            }
+                            ReadMemberTokens(ref cur_member, ref argument_tokens);
+                            cur_method.Arguments.Add(cur_member);
+                        }
+
+                        cur_method.Attributes = property_attributes;
+                        property_attributes = new List<AttributeInstanceDescription>();
+                        cur_methods.Add(cur_method);
+                        cur_method = new TypeInstanceDescription.MethodDescription();
+                    }
+                    else
+                    {
+                        //reading a member
+                        Stack<string> member_tokens = new Stack<string>();
+                        //for a member, we need at least 2 tokens, possibly 3 as type, name, val
+                        Assertion.Assert(unhandled_tokens.Count >= 2, "Did not get enough tokens while reading member "
+                            + member_tokens.Peek() + " while reading class " + cur_class.Name.AsString());
+                        member_tokens.Push(unhandled_tokens.Pop());
+                        member_tokens.Push(unhandled_tokens.Pop());
+                        if (unhandled_tokens.Count > 0)
+                        {
+                            member_tokens.Push(unhandled_tokens.Pop());
+                        }
+                        Assertion.Assert(unhandled_tokens.Count == 0, "Encountered unhandled tokens after reading member "
+                            + member_tokens.Peek() + " while reading class " + cur_class.Name.AsString());
+
+                        ReadMemberTokens(ref cur_member, ref member_tokens);
+                        cur_member.Attributes = property_attributes;
+                        property_attributes = new List<AttributeInstanceDescription>();
+                        cur_members.Add(cur_member);
+                        cur_member = new TypeInstanceDescription.MemberDescription();
+                    }
                 }
                 else 
                 {
@@ -204,8 +269,9 @@ namespace QuickScript
         {
             Attributes,
             Class,
-            Member,
+            Property, //member
             Value,
+            Method,
             None //Count
         }
     }
