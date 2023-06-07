@@ -130,13 +130,20 @@ namespace QuickScript.Typing
         }
         public string GetName() { return Name.AsString(); }
     }
-
     public class TypeInstanceDescription
     {
         public HashString Name { get; set; } = new HashString();
         public List<AttributeInstanceDescription>? Attributes { get; set; }
         public ValueType? Value { get; set; }
         public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
+        public abstract class PropertyDescription
+        {
+            public HashString Name { get; set; } = new HashString();
+            public HashString Type { get; set; } = new HashString();
+            public List<AttributeInstanceDescription>? Attributes { get; set; }
+
+            public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
+        }
         public class MemberDescription
         {
             public HashString Name { get; set; } = new HashString();
