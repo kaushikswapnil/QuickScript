@@ -139,10 +139,16 @@ namespace QuickScript.Typing
         public abstract class PropertyDescription
         {
             public HashString Name { get; set; } = new HashString();
-            public HashString Type { get; set; } = new HashString();
+            public HashString TypeName { get; set; } = new HashString();
             public List<AttributeInstanceDescription>? Attributes { get; set; }
 
             public bool HasAttributes() { return Attributes != null && Attributes.Count > 0; }
+            public enum EPropertyType
+            {
+                Member,
+                Method
+            }
+            public abstract EPropertyType GetPropertyType();
         }
         public class MemberDescription
         {
