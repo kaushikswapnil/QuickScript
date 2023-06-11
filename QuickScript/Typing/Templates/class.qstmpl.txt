@@ -1,0 +1,8 @@
+[struct, serializable]
+class <<string, name>, key>
+{
+?
+[]
+<type, member_type> <string, member_name> | = <string, member_value> |;
+?
+}
