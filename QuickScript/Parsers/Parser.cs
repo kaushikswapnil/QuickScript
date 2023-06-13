@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickScript
+namespace QuickScript.Parsers
 {
-    using ValueType = QuickScript.Typing.ValueType;
+    using ValueType = Typing.ValueType;
     public class Parser
     {
         public static List<TypeInstanceDescription> ParseDirectory(in string directory_name, in bool parse_sub_directories = true)
@@ -17,7 +17,7 @@ namespace QuickScript
 
             List<TypeInstanceDescription> retval = new List<TypeInstanceDescription>();
 
-            var file_names = Directory.EnumerateFiles(directory_name,"*.qs",
+            var file_names = Directory.EnumerateFiles(directory_name, "*.qs",
                                                         parse_sub_directories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
             foreach (string file_name in file_names)
             {
@@ -55,7 +55,7 @@ namespace QuickScript
                 }
             }
 
-            foreach (char c in descLines) 
+            foreach (char c in descLines)
             {
                 switch (c)
                 {
@@ -79,7 +79,7 @@ namespace QuickScript
                         if (!reading_comment)
                         {
                             TryAddProperWordToTokens();
-                            tokens.Add(Char.ToString(c));
+                            tokens.Add(char.ToString(c));
                         }
                         break;
                     case '*':
@@ -104,7 +104,7 @@ namespace QuickScript
         {
             ReadState prevState = ReadState.None;
             ReadState readState = ReadState.Class;
-            
+
             Stack<string> unhandled_tokens = new Stack<string>();
 
             List<TypeInstanceDescription> retVal = new List<TypeInstanceDescription>();
@@ -168,7 +168,7 @@ namespace QuickScript
                         cur_class.Members = cur_members;
                         cur_members = new List<TypeInstanceDescription.MemberDescription>();
                     }
-                    
+
                     retVal.Add(cur_class);
                     cur_class = new TypeInstanceDescription();
                     ChangeReadState(ReadState.Class);
@@ -180,7 +180,7 @@ namespace QuickScript
                     Assertion.Assert(readState == ReadState.Property, "Should only encounter ; when reading properties such as members or methods");
                     Assertion.Assert(unhandled_tokens.Count >= 2, "Encountered a ';' but not enough tokens before it");
 
-                    void ReadMemberTokens(ref TypeInstanceDescription.MemberDescription mem_desc,  ref Stack<string> member_tokens)
+                    void ReadMemberTokens(ref TypeInstanceDescription.MemberDescription mem_desc, ref Stack<string> member_tokens)
                     {
                         //type, name
                         //for a member, we need at least 2 tokens, possibly 3 as type, name, val
@@ -200,14 +200,14 @@ namespace QuickScript
                         Assertion.Assert(unhandled_tokens.Count >= 3, "Should have at least the name and return type for function, while reading class "
                             + cur_class.Name.AsString());
                         top_token = unhandled_tokens.Pop();
-                        while(top_token != "(")
+                        while (top_token != "(")
                         {
                             Assertion.Assert(unhandled_tokens.Count >= 5, "Did not have enough tokens" +
                                 " while reading function in  class "
                             + cur_class.Name.AsString());
                             //read values until we reach ','
                             Stack<string> argument_tokens = new Stack<string>();
-                            while (top_token!= ",")
+                            while (top_token != ",")
                             {
                                 if (top_token == "(")
                                 {
@@ -248,7 +248,7 @@ namespace QuickScript
                         cur_member = new TypeInstanceDescription.MemberDescription();
                     }
                 }
-                else 
+                else
                 {
                     if (readState == ReadState.Attributes)
                     {
