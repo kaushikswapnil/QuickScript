@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickScript.Typing
+namespace QuickScript.Experimental
 {
     internal class TemplateParser
     {
